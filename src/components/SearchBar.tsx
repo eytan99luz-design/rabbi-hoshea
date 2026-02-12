@@ -15,7 +15,7 @@ export function SearchBar({ value, onChange, placeholder = "חפש שיעור...
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="pl-10 pr-4 bg-card border-border font-body text-sm"
+        className="pl-10 pr-4 bg-card border-border font-body text-sm text-foreground"
         dir="rtl"
       />
     </div>

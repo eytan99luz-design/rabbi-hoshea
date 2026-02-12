@@ -4,7 +4,8 @@ import { Header } from "@/components/Header";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { MasechetFilter } from "@/components/MasechetFilter";
-import { useVideos, useMasechtot } from "@/hooks/useVideos";
+import { DafFilter } from "@/components/DafFilter";
+import { useVideos, useMasechtot, useDafimForMasechet } from "@/hooks/useVideos";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,10 +17,12 @@ const Browse = () => {
   const [selectedMasechet, setSelectedMasechet] = useState<string | null>(
     searchParams.get("masechet")
   );
+  const [selectedDaf, setSelectedDaf] = useState<number | null>(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const { data: videos, isLoading } = useVideos(selectedMasechet || undefined, search || undefined);
+  const { data: videos, isLoading } = useVideos(selectedMasechet || undefined, search || undefined, selectedDaf || undefined);
   const { data: masechtot } = useMasechtot();
+  const { data: dafim } = useDafimForMasechet(selectedMasechet);
 
   useEffect(() => {
     if (selectedMasechet) {
@@ -31,17 +34,27 @@ const Browse = () => {
 
   const handleSelectMasechet = (masechet: string | null) => {
     setSelectedMasechet(masechet);
+    setSelectedDaf(null);
     setMobileFilterOpen(false);
   };
 
   const FilterContent = () => (
-    masechtot ? (
-      <MasechetFilter
-        masechtot={masechtot}
-        selected={selectedMasechet}
-        onSelect={handleSelectMasechet}
-      />
-    ) : null
+    <div className="space-y-4">
+      {masechtot && (
+        <MasechetFilter
+          masechtot={masechtot}
+          selected={selectedMasechet}
+          onSelect={handleSelectMasechet}
+        />
+      )}
+      {selectedMasechet && dafim && dafim.length > 0 && (
+        <DafFilter
+          dafim={dafim}
+          selected={selectedDaf}
+          onSelect={(daf) => { setSelectedDaf(daf); setMobileFilterOpen(false); }}
+        />
+      )}
+    </div>
   );
 
   return (
@@ -73,15 +86,30 @@ const Browse = () => {
           </div>
         </div>
 
-        {selectedMasechet && (
-          <div className="flex items-center gap-2 mb-4" dir="rtl">
-            <span className="text-sm text-muted-foreground font-body">מסכת:</span>
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-primary-foreground text-sm font-body">
-              {selectedMasechet}
-              <button onClick={() => setSelectedMasechet(null)}>
-                <X className="h-3 w-3" />
-              </button>
-            </span>
+        {(selectedMasechet || selectedDaf) && (
+          <div className="flex items-center gap-2 mb-4 flex-wrap" dir="rtl">
+            {selectedMasechet && (
+              <>
+                <span className="text-sm text-muted-foreground font-body">מסכת:</span>
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-primary-foreground text-sm font-body">
+                  {selectedMasechet}
+                  <button onClick={() => { setSelectedMasechet(null); setSelectedDaf(null); }}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              </>
+            )}
+            {selectedDaf && (
+              <>
+                <span className="text-sm text-muted-foreground font-body">דף:</span>
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent text-accent-foreground text-sm font-body">
+                  {selectedDaf}
+                  <button onClick={() => setSelectedDaf(null)}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              </>
+            )}
           </div>
         )}
 

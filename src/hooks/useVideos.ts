@@ -11,9 +11,9 @@ export interface Video {
   published_at: string | null;
 }
 
-export function useVideos(masechet?: string, searchQuery?: string) {
+export function useVideos(masechet?: string, searchQuery?: string, daf?: number) {
   return useQuery({
-    queryKey: ["videos", masechet, searchQuery],
+    queryKey: ["videos", masechet, searchQuery, daf],
     queryFn: async () => {
       let query = supabase
         .from("videos")
@@ -24,6 +24,10 @@ export function useVideos(masechet?: string, searchQuery?: string) {
         query = query.eq("masechet", masechet);
       }
 
+      if (daf) {
+        query = query.eq("daf", daf);
+      }
+
       if (searchQuery) {
         query = query.ilike("title", `%${searchQuery}%`);
       }
@@ -32,6 +36,25 @@ export function useVideos(masechet?: string, searchQuery?: string) {
       if (error) throw error;
       return data as Video[];
     },
+  });
+}
+
+export function useDafimForMasechet(masechet: string | null) {
+  return useQuery({
+    queryKey: ["dafim", masechet],
+    queryFn: async () => {
+      if (!masechet) return [];
+      const { data, error } = await supabase
+        .from("videos")
+        .select("daf")
+        .eq("masechet", masechet)
+        .not("daf", "is", null)
+        .order("daf", { ascending: true });
+      if (error) throw error;
+      const unique = [...new Set(data.map(r => r.daf!))];
+      return unique;
+    },
+    enabled: !!masechet,
   });
 }
 
