@@ -21,6 +21,9 @@ export function Header() {
           <Link to="/browse" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors">
             עיון
           </Link>
+          <Link to="/articles" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+            מאמרים
+          </Link>
         </nav>
       </div>
     </header>
