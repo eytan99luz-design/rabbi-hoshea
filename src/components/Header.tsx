@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Settings } from "lucide-react";
 
 export function Header() {
   return (
@@ -7,7 +7,9 @@ export function Header() {
       <div className="container flex items-center justify-between h-16 px-4">
         <Link to="/" className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center">
-            <BookOpen className="h-5 w-5 text-accent-foreground" />
+            <Link to="/admin" title="ניהול">
+              <BookOpen className="h-5 w-5 text-accent-foreground" />
+            </Link>
           </div>
           <div>
             <h1 className="font-display text-lg font-bold leading-tight">הרב הושע רבינוביץ׳</h1>
