@@ -13,6 +13,7 @@ import MyLessons from "./pages/MyLessons";
 import Login from "./pages/Login";
 import Stats from "./pages/Stats";
 import Playlists from "./pages/Playlists";
+import CalendarPage from "./pages/CalendarPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
