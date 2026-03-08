@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Parse request body for optional parameters
-    let limit = 10;
+    let limit = 5;
     let videoId: string | null = null;
     try {
       const body = await req.json();
