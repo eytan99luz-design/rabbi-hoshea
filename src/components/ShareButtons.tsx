@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 interface ShareButtonsProps {
   url: string;
   title: string;
+  summary?: string;
 }
 
 export function ShareButtons({ url, title }: ShareButtonsProps) {
