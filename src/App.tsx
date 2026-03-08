@@ -8,6 +8,7 @@ import Browse from "./pages/Browse";
 import Lesson from "./pages/Lesson";
 import Articles from "./pages/Articles";
 import Admin from "./pages/Admin";
+import Masechet from "./pages/Masechet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
