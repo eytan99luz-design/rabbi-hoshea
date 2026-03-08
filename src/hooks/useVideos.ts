@@ -140,6 +140,19 @@ export function useAdjacentVideos(masechet: string | null, daf: number | null) {
   });
 }
 
+export function useTotalVideoCount() {
+  return useQuery({
+    queryKey: ["total-video-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("videos")
+        .select("id", { count: "exact", head: true });
+      if (error) throw error;
+      return count || 0;
+    },
+  });
+}
+
 export function useMasechtot() {
   return useQuery({
     queryKey: ["masechtot"],

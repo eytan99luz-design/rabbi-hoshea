@@ -6,7 +6,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { EmailSubscribe } from "@/components/EmailSubscribe";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
-import { useVideos, useMasechtot } from "@/hooks/useVideos";
+import { useVideos, useMasechtot, useTotalVideoCount } from "@/hooks/useVideos";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { getMasechetEnglish } from "@/lib/masechet-list";
 import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library } from "lucide-react";
@@ -41,6 +41,7 @@ const Index = () => {
   const { data: recentVideos, isLoading } = useVideos(undefined, search || undefined);
   const { data: masechtot } = useMasechtot();
   const { data: siteSettings } = useSiteSettings();
+  const { data: totalCount } = useTotalVideoCount();
 
   const topMasechtot = masechtot
     ? Object.entries(masechtot)
@@ -48,7 +49,7 @@ const Index = () => {
         .slice(0, 8)
     : [];
 
-  const totalVideos = masechtot ? Object.values(masechtot).reduce((a, b) => a + b, 0) : 0;
+  const totalVideos = totalCount ?? (masechtot ? Object.values(masechtot).reduce((a, b) => a + b, 0) : 0);
   const totalMasechtot = masechtot ? Object.keys(masechtot).length : 0;
   const latestVideo = recentVideos?.[0];
 
