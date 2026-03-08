@@ -79,6 +79,25 @@ export function VideoManager() {
     },
   });
 
+  const updateSummaryMutation = useMutation({
+    mutationFn: async ({ id, summary }: { id: string; summary: string }) => {
+      const { error } = await supabase
+        .from("videos")
+        .update({ summary, summary_edited: true, updated_at: new Date().toISOString() } as any)
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-videos"] });
+      queryClient.invalidateQueries({ queryKey: ["videos"] });
+      setEditSummaryId(null);
+      toast({ title: "התקציר עודכן בהצלחה" });
+    },
+    onError: (err: any) => {
+      toast({ title: "שגיאה", description: err.message, variant: "destructive" });
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("videos").delete().eq("id", id);
