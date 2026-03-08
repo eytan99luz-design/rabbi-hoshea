@@ -15,9 +15,6 @@ const Stats = () => {
   const { data: history, isLoading: histLoading } = useWatchHistory();
   const { favorites, isLoading: favLoading } = useFavorites();
 
-  if (authLoading) return null;
-  if (!user) return <Navigate to="/login" replace />;
-
   const isLoading = histLoading || favLoading;
   const watchedCount = history?.length || 0;
 
