@@ -18,6 +18,7 @@ import { SiteSettings } from "@/components/admin/SiteSettings";
 import { SubscribersList } from "@/components/admin/SubscribersList";
 import { YouTubeSync } from "@/components/admin/YouTubeSync";
 import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
+import { TagManager } from "@/components/admin/TagManager";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
