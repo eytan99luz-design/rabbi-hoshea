@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { useArticles } from "@/hooks/useArticles";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Download, Eye } from "lucide-react";
+import { FileText, Download, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { FlipbookViewer } from "@/components/FlipbookViewer";
 
 const Articles = () => {
   const { data: articles, isLoading } = useArticles();
@@ -62,8 +63,8 @@ const Articles = () => {
                         setViewingTitle(article.title);
                       }}
                     >
-                      <Eye className="h-4 w-4 ml-1" />
-                      צפייה
+                      <BookOpen className="h-4 w-4 ml-1" />
+                      קריאה
                     </Button>
                   )}
                   <Button
@@ -91,19 +92,15 @@ const Articles = () => {
         )}
       </div>
 
-      {/* PDF Viewer Dialog */}
+      {/* Flipbook Viewer Dialog */}
       <Dialog open={!!viewingUrl} onOpenChange={() => setViewingUrl(null)}>
-        <DialogContent className="max-w-4xl h-[85vh] flex flex-col">
+        <DialogContent className="max-w-5xl h-[90vh] flex flex-col p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="font-display" dir="rtl">{viewingTitle}</DialogTitle>
           </DialogHeader>
           <div className="flex-1 min-h-0">
             {viewingUrl && (
-              <iframe
-                src={viewingUrl}
-                className="w-full h-full rounded-md border border-border"
-                title={viewingTitle}
-              />
+              <FlipbookViewer pdfUrl={viewingUrl} title={viewingTitle} />
             )}
           </div>
         </DialogContent>
