@@ -6,7 +6,7 @@ import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useVideos, useMasechtot } from "@/hooks/useVideos";
 import { getMasechetEnglish } from "@/lib/masechet-list";
-import { ArrowLeft, BookOpen, Search as SearchIcon } from "lucide-react";
+import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -20,6 +20,10 @@ const Index = () => {
         .sort((a, b) => b[1] - a[1])
         .slice(0, 8)
     : [];
+
+  const totalVideos = masechtot ? Object.values(masechtot).reduce((a, b) => a + b, 0) : 0;
+  const totalMasechtot = masechtot ? Object.keys(masechtot).length : 0;
+  const latestVideo = recentVideos?.[0];
 
   return (
     <div className="min-h-screen bg-background">
@@ -47,11 +51,91 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Stats Bar */}
+      {totalVideos > 0 && (
+        <section className="border-b border-border bg-card">
+          <div className="container px-4 py-5">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center gap-2 text-accent">
+                  <Play className="h-5 w-5" />
+                  <span className="font-display text-2xl font-bold text-foreground">{totalVideos}</span>
+                </div>
+                <span className="text-xs text-muted-foreground font-body">שיעורים</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center gap-2 text-accent">
+                  <Library className="h-5 w-5" />
+                  <span className="font-display text-2xl font-bold text-foreground">{totalMasechtot}</span>
+                </div>
+                <span className="text-xs text-muted-foreground font-body">מסכתות</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center gap-2 text-accent">
+                  <BarChart3 className="h-5 w-5" />
+                  <span className="font-display text-2xl font-bold text-foreground">
+                    {topMasechtot[0]?.[1] || 0}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground font-body" dir="rtl">
+                  שיעורים ב{topMasechtot[0]?.[0] || "—"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured Latest Video */}
+      {latestVideo && !search && (
+        <section className="container px-4 py-10">
+          <h2 className="font-display text-xl font-bold text-foreground mb-5" dir="rtl">השיעור האחרון</h2>
+          <Link
+            to={`/lesson/${latestVideo.youtube_id}`}
+            className="group block rounded-xl overflow-hidden border border-border bg-card hover:shadow-xl transition-all duration-300"
+          >
+            <div className="grid md:grid-cols-2 gap-0">
+              <div className="aspect-video relative overflow-hidden">
+                <img
+                  src={latestVideo.thumbnail_url || `https://img.youtube.com/vi/${latestVideo.youtube_id}/maxresdefault.jpg`}
+                  alt={latestVideo.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-primary/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center">
+                    <Play className="h-7 w-7 text-accent-foreground fill-current" />
+                  </div>
+                </div>
+              </div>
+              <div className="p-6 md:p-8 flex flex-col justify-center" dir="rtl">
+                <span className="inline-block text-xs font-body font-semibold text-accent bg-accent/10 px-3 py-1 rounded-full w-fit mb-3">
+                  חדש
+                </span>
+                <h3 className="font-display text-lg md:text-xl font-bold text-foreground leading-relaxed mb-2">
+                  {latestVideo.title}
+                </h3>
+                {latestVideo.masechet && (
+                  <p className="text-sm text-muted-foreground font-body">
+                    {getMasechetEnglish(latestVideo.masechet)} • מסכת {latestVideo.masechet}
+                    {latestVideo.daf && ` • דף ${latestVideo.daf}`}
+                  </p>
+                )}
+                {latestVideo.published_at && (
+                  <p className="text-xs text-muted-foreground font-body mt-2">
+                    {new Date(latestVideo.published_at).toLocaleDateString("he-IL")}
+                  </p>
+                )}
+              </div>
+            </div>
+          </Link>
+        </section>
+      )}
+
       {/* Quick Masechet Access */}
       {topMasechtot.length > 0 && (
         <section className="container px-4 py-10">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display text-xl font-bold text-foreground" dir="rtl">מסכתות</h2>
+            <h2 className="font-display text-xl font-bold text-foreground" dir="rtl">מסכתות פופולריות</h2>
             <Link to="/browse">
               <Button variant="ghost" size="sm" className="text-muted-foreground font-body">
                 לכל המסכתות
@@ -97,7 +181,7 @@ const Index = () => {
           </div>
         ) : recentVideos && recentVideos.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {recentVideos.slice(0, 12).map((video) => (
+            {recentVideos.slice(search ? 0 : 1, search ? 12 : 13).map((video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
