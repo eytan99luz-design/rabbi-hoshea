@@ -28,6 +28,11 @@ const Masechet = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`מסכת ${masechet}`}
+        description={`${videos?.length || 0} שיעורי גמרא במסכת ${masechet} מפי הרב הושע רבינוביץ׳`}
+        path={`/masechet/${encodeURIComponent(masechet)}`}
+      />
       <Header />
 
       <div className="container px-4 py-6">

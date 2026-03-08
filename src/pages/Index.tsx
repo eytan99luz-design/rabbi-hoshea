@@ -28,6 +28,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="בית המדרש הדיגיטלי" path="/" />
       <Header />
 
       {/* Hero */}
