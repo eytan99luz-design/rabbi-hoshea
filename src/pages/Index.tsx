@@ -7,6 +7,7 @@ import { EmailSubscribe } from "@/components/EmailSubscribe";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useVideos, useMasechtot } from "@/hooks/useVideos";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { getMasechetEnglish } from "@/lib/masechet-list";
 import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ const Index = () => {
   const [search, setSearch] = useState("");
   const { data: recentVideos, isLoading } = useVideos(undefined, search || undefined);
   const { data: masechtot } = useMasechtot();
+  const { data: siteSettings } = useSiteSettings();
 
   const topMasechtot = masechtot
     ? Object.entries(masechtot)
@@ -69,7 +71,7 @@ const Index = () => {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/20 text-accent mb-6"
           >
             <BookOpen className="h-4 w-4" />
-            <span className="text-sm font-body font-medium">שיעורי גמרא יומיים</span>
+            <span className="text-sm font-body font-medium">{siteSettings?.hero_badge || "שיעורי גמרא יומיים"}</span>
           </motion.div>
           <motion.h1
             initial="hidden"
@@ -79,7 +81,7 @@ const Index = () => {
             className="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight"
             dir="rtl"
           >
-            בית המדרש הדיגיטלי
+            {siteSettings?.hero_title || "בית המדרש הדיגיטלי"}
           </motion.h1>
           <motion.p
             initial="hidden"
@@ -89,7 +91,7 @@ const Index = () => {
             className="text-lg text-primary-foreground/70 font-body max-w-xl mx-auto mb-8"
             dir="rtl"
           >
-            שיעורי תורה מפי הרב הושע רבינוביץ׳ — לימוד גמרא מסודר לפי מסכת ודף
+            {siteSettings?.hero_subtitle || "שיעורי תורה מפי הרב הושע רבינוביץ׳ — לימוד גמרא מסודר לפי מסכת ודף"}
           </motion.p>
           <motion.div
             initial="hidden"
@@ -292,7 +294,7 @@ const Index = () => {
       <footer className="border-t border-border bg-card py-8">
         <div className="container px-4 text-center">
           <p className="text-sm text-muted-foreground font-body">
-            © {new Date().getFullYear()} שיעורי הרב הושע רבינוביץ׳
+            © {new Date().getFullYear()} {siteSettings?.footer_text || "שיעורי הרב הושע רבינוביץ׳"}
           </p>
         </div>
       </footer>
