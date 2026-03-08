@@ -91,7 +91,7 @@ const Index = () => {
             className="text-lg text-primary-foreground/70 font-body max-w-xl mx-auto mb-8"
             dir="rtl"
           >
-            שיעורי תורה מפי הרב הושע רבינוביץ׳ — לימוד גמרא מסודר לפי מסכת ודף
+            {siteSettings?.hero_subtitle || "שיעורי תורה מפי הרב הושע רבינוביץ׳ — לימוד גמרא מסודר לפי מסכת ודף"}
           </motion.p>
           <motion.div
             initial="hidden"
