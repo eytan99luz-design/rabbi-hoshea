@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
     let videoId: string | null = null;
     try {
       const body = await req.json();
-      if (body.limit) limit = Math.min(body.limit, 50);
+      if (body.limit) limit = Math.min(body.limit, 10);
       if (body.video_id) videoId = body.video_id;
     } catch { /* no body, use defaults */ }
 
