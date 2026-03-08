@@ -8,6 +8,7 @@ import { ChevronRight, ChevronLeft, Play } from "lucide-react";
 import { Header } from "@/components/Header";
 import { SEOHead } from "@/components/SEOHead";
 import { numberToHebrewDaf } from "@/lib/masechet-list";
+import { getHebrewDay } from "@/lib/hebrew-date";
 import {
   HoverCard,
   HoverCardContent,
