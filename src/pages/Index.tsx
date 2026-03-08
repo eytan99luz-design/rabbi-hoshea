@@ -6,6 +6,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { EmailSubscribe } from "@/components/EmailSubscribe";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
+import { DafYomiBanner } from "@/components/DafYomiBanner";
 import { useVideos, useMasechtot, useTotalVideoCount } from "@/hooks/useVideos";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { getMasechetEnglish } from "@/lib/masechet-list";
