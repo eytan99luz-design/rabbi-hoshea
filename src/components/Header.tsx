@@ -52,6 +52,18 @@ export function Header() {
                     השיעורים שלי
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/playlists" className="flex items-center gap-2 font-body cursor-pointer">
+                    <ListMusic className="h-4 w-4" />
+                    פלייליסטים
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/stats" className="flex items-center gap-2 font-body cursor-pointer">
+                    <BarChart3 className="h-4 w-4" />
+                    סטטיסטיקות
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => signOut()}
                   className="flex items-center gap-2 font-body cursor-pointer"
