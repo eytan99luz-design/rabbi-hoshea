@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { useIsAdmin } from "@/hooks/useAuth";
 import { useArticles, useUploadArticle, useDeleteArticle, Article } from "@/hooks/useArticles";
@@ -11,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen, Sparkles, Calendar } from "lucide-react";
+import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen, Sparkles, Calendar, Pencil, Save, X } from "lucide-react";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { VideoManager } from "@/components/admin/VideoManager";
 import { SiteSettings } from "@/components/admin/SiteSettings";
@@ -120,6 +121,11 @@ function ArticleUploadForm() {
 function ArticlesList() {
   const { data: articles, isLoading } = useArticles();
   const deleteMutation = useDeleteArticle();
+  const queryClient = useQueryClient();
+  const [editSummaryId, setEditSummaryId] = useState<string | null>(null);
+  const [editSummaryValue, setEditSummaryValue] = useState("");
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [savingSummaryId, setSavingSummaryId] = useState<string | null>(null);
 
   const handleDelete = async (article: Article) => {
     try {
@@ -127,6 +133,41 @@ function ArticlesList() {
       toast({ title: "המאמר נמחק" });
     } catch (err: any) {
       toast({ title: "שגיאה", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleGenerateSummary = async (articleId: string) => {
+    setGeneratingId(articleId);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-article-summary", {
+        body: { article_id: articleId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "התקציר נוצר בהצלחה" });
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+    } catch (err: any) {
+      toast({ title: "שגיאה ביצירת תקציר", description: err.message, variant: "destructive" });
+    } finally {
+      setGeneratingId(null);
+    }
+  };
+
+  const handleSaveSummary = async (articleId: string) => {
+    setSavingSummaryId(articleId);
+    try {
+      const { error } = await supabase
+        .from("articles")
+        .update({ summary: editSummaryValue })
+        .eq("id", articleId);
+      if (error) throw error;
+      toast({ title: "התקציר נשמר" });
+      setEditSummaryId(null);
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+    } catch (err: any) {
+      toast({ title: "שגיאה", description: err.message, variant: "destructive" });
+    } finally {
+      setSavingSummaryId(null);
     }
   };
 
@@ -141,21 +182,80 @@ function ArticlesList() {
         {!articles || articles.length === 0 ? (
           <p className="text-muted-foreground font-body text-sm" dir="rtl">אין מאמרים</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {articles.map((article) => (
-              <div key={article.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
-                <div className="flex items-center gap-3" dir="rtl">
-                  <FileText className="h-5 w-5 text-accent shrink-0" />
-                  <div>
-                    <p className="font-body font-medium text-foreground text-sm">{article.title}</p>
-                    <p className="text-xs text-muted-foreground font-body">
-                      {new Date(article.created_at).toLocaleDateString("he-IL")}
-                    </p>
+              <div key={article.id} className="p-3 rounded-lg border border-border space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3" dir="rtl">
+                    <FileText className="h-5 w-5 text-accent shrink-0" />
+                    <div>
+                      <p className="font-body font-medium text-foreground text-sm">{article.title}</p>
+                      <p className="text-xs text-muted-foreground font-body">
+                        {new Date(article.created_at).toLocaleDateString("he-IL")}
+                      </p>
+                    </div>
                   </div>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(article)} disabled={deleteMutation.isPending}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(article)} disabled={deleteMutation.isPending}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+
+                {/* Summary section */}
+                <div className="pr-8 space-y-1" dir="rtl">
+                  {editSummaryId === article.id ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        value={editSummaryValue}
+                        onChange={(e) => setEditSummaryValue(e.target.value)}
+                        className="text-foreground text-sm min-h-[80px]"
+                        dir="rtl"
+                        placeholder="כתוב תקציר למאמר..."
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" className="font-body" onClick={() => handleSaveSummary(article.id)} disabled={savingSummaryId === article.id}>
+                          {savingSummaryId === article.id ? <Loader2 className="h-3 w-3 animate-spin ml-1" /> : <Save className="h-3 w-3 ml-1" />}
+                          שמור
+                        </Button>
+                        <Button size="sm" variant="ghost" className="font-body" onClick={() => setEditSummaryId(null)}>
+                          <X className="h-3 w-3 ml-1" />
+                          ביטול
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-2">
+                      {article.summary ? (
+                        <p className="text-xs text-muted-foreground font-body flex-1 leading-relaxed">{article.summary}</p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground/50 font-body italic flex-1">אין תקציר</p>
+                      )}
+                      <div className="flex gap-1 shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 font-body text-xs"
+                          onClick={() => {
+                            setEditSummaryId(article.id);
+                            setEditSummaryValue(article.summary || "");
+                          }}
+                        >
+                          <Pencil className="h-3 w-3 ml-1" />
+                          ערוך
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 font-body text-xs"
+                          onClick={() => handleGenerateSummary(article.id)}
+                          disabled={generatingId === article.id}
+                        >
+                          {generatingId === article.id ? <Loader2 className="h-3 w-3 animate-spin ml-1" /> : <Sparkles className="h-3 w-3 ml-1" />}
+                          צור AI
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>

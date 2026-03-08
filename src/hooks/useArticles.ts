@@ -5,6 +5,7 @@ export interface Article {
   id: string;
   title: string;
   description: string | null;
+  summary: string | null;
   file_url: string;
   file_type: string;
   created_at: string;
