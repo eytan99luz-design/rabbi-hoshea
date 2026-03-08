@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
 import { VideoCard } from "@/components/VideoCard";
 import { useVideos, useDafimForMasechet } from "@/hooks/useVideos";
 import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
