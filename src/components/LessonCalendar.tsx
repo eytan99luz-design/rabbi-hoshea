@@ -126,17 +126,24 @@ export function LessonCalendar() {
                   ${selected ? "bg-primary text-primary-foreground" : hasVideos ? "bg-accent/10 hover:bg-accent/20 text-foreground" : "hover:bg-muted text-muted-foreground"}
                 `}
               >
-                <span className={`${hasVideos ? "font-bold" : ""}`}>{day}</span>
+                <span className={`${hasVideos ? "font-bold" : ""} text-[11px] leading-tight`}>{day}</span>
                 {hasVideos && (
-                  <div className="flex gap-0.5 mt-0.5">
-                    {Array.from({ length: Math.min(count, 3) }).map((_, j) => (
-                      <div
-                        key={j}
-                        className={`w-1 h-1 rounded-full ${
-                          selected ? "bg-primary-foreground" : "bg-accent"
+                  <div className="flex flex-col items-center gap-0 mt-0.5 w-full overflow-hidden">
+                    {videosByDay[day].slice(0, 1).map((v) => (
+                      <span
+                        key={v.id}
+                        className={`text-[7px] leading-[9px] truncate max-w-full px-0.5 ${
+                          selected ? "text-primary-foreground" : "text-accent"
                         }`}
-                      />
+                      >
+                        {v.masechet ? `${v.masechet}${v.daf ? ` ${v.daf}` : ""}` : ""}
+                      </span>
                     ))}
+                    {count > 1 && (
+                      <span className={`text-[7px] leading-[9px] ${selected ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                        +{count - 1}
+                      </span>
+                    )}
                   </div>
                 )}
               </button>
