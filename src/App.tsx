@@ -11,6 +11,8 @@ import Admin from "./pages/Admin";
 import Masechet from "./pages/Masechet";
 import MyLessons from "./pages/MyLessons";
 import Login from "./pages/Login";
+import Stats from "./pages/Stats";
+import Playlists from "./pages/Playlists";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
