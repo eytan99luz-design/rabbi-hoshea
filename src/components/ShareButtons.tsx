@@ -23,7 +23,7 @@ export function ShareButtons({ url, title, summary }: ShareButtonsProps) {
     {
       name: "Telegram",
       icon: Send,
-      href: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
+      href: `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(title)}`,
       className: "hover:bg-blue-500/10 hover:text-blue-500",
     },
     {

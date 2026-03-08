@@ -22,7 +22,7 @@ const Lesson = () => {
   // Track watch history
   useEffect(() => {
     if (video?.id && user) {
-      trackWatch.mutate(video.id);
+      trackWatch.mutate({ videoId: video.id });
     }
   }, [video?.id, user]);
 
