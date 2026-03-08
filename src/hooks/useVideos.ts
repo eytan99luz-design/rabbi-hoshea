@@ -9,6 +9,7 @@ export interface Video {
   daf: number | null;
   thumbnail_url: string | null;
   published_at: string | null;
+  summary: string | null;
 }
 
 const PAGE_SIZE = 24;

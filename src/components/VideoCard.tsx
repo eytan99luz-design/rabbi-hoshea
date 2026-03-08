@@ -31,6 +31,11 @@ export function VideoCard({ video }: VideoCardProps) {
         <h3 className="font-display text-sm font-semibold text-foreground line-clamp-2 leading-relaxed" dir="rtl">
           {video.title}
         </h3>
+        {video.summary && (
+          <p className="mt-1.5 text-xs text-muted-foreground font-body line-clamp-2 leading-relaxed" dir="rtl">
+            {video.summary}
+          </p>
+        )}
         {video.masechet && (
           <p className="mt-2 text-xs text-muted-foreground font-body">
             {getMasechetEnglish(video.masechet)} • מסכת {video.masechet}
