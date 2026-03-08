@@ -182,7 +182,7 @@ export function LessonCalendar() {
                   {video.masechet && (
                     <p className="text-xs text-muted-foreground font-body">
                       {video.masechet}
-                      {video.daf ? ` דף ${video.daf}` : ""}
+                      {video.daf ? ` דף ${numberToHebrewDaf(video.daf)}` : ""}
                     </p>
                   )}
                 </div>
