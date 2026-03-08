@@ -111,6 +111,11 @@ const Index = () => {
         )}
       </section>
 
+      {/* Subscribe */}
+      <section className="container px-4 py-12">
+        <EmailSubscribe />
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-border bg-card py-8">
         <div className="container px-4 text-center">
