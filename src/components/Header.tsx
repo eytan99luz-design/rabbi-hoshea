@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Settings } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function Header() {
   return (
@@ -26,6 +27,7 @@ export function Header() {
           <Link to="/articles" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors">
             מאמרים
           </Link>
+          <ThemeToggle />
         </nav>
       </div>
     </header>

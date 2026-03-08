@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { MasechetFilter } from "@/components/MasechetFilter";
@@ -87,6 +88,7 @@ const Browse = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="עיון בשיעורים" description="חיפוש ועיון בכל שיעורי הגמרא לפי מסכת ודף" path="/browse" />
       <Header />
 
       <div className="container px-4 py-6">

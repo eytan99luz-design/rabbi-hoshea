@@ -1,5 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
+import { ShareButtons } from "@/components/ShareButtons";
 import { useVideo, useAdjacentVideos } from "@/hooks/useVideos";
 import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
@@ -76,24 +78,36 @@ const Lesson = () => {
           />
         </div>
 
+        <SEOHead
+          title={video.title}
+          description={`שיעור ${video.masechet ? `במסכת ${video.masechet}` : ""} ${video.daf ? `דף ${video.daf}` : ""} מפי הרב הושע רבינוביץ׳`}
+          path={`/lesson/${video.youtube_id}`}
+        />
+
         {/* Title and Meta */}
         <div className="mt-6" dir="rtl">
           <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
             {video.title}
           </h1>
-          {video.masechet && (
-            <div className="flex items-center gap-3 mt-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/15 text-accent font-body text-sm font-medium">
-                <BookOpen className="h-3.5 w-3.5" />
-                {getMasechetEnglish(video.masechet)}
-              </span>
+          <div className="flex items-center justify-between flex-wrap gap-3 mt-3">
+            <div className="flex items-center gap-3">
+              {video.masechet && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/15 text-accent font-body text-sm font-medium">
+                  <BookOpen className="h-3.5 w-3.5" />
+                  {getMasechetEnglish(video.masechet)}
+                </span>
+              )}
               {video.daf && (
                 <span className="text-sm text-muted-foreground font-body">
                   דף {numberToHebrewDaf(video.daf)}
                 </span>
               )}
             </div>
-          )}
+            <ShareButtons
+              url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
+              title={video.title}
+            />
+          </div>
         </div>
 
         {/* Navigation */}

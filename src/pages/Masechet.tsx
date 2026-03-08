@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
 import { VideoCard } from "@/components/VideoCard";
 import { useVideos, useDafimForMasechet } from "@/hooks/useVideos";
 import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
@@ -27,6 +28,11 @@ const Masechet = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`מסכת ${masechet}`}
+        description={`${videos?.length || 0} שיעורי גמרא במסכת ${masechet} מפי הרב הושע רבינוביץ׳`}
+        path={`/masechet/${encodeURIComponent(masechet)}`}
+      />
       <Header />
 
       <div className="container px-4 py-6">
