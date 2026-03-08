@@ -1,5 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
+import { ShareButtons } from "@/components/ShareButtons";
 import { useVideo, useAdjacentVideos } from "@/hooks/useVideos";
 import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
