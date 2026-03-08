@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Calendar, Play } from "lucide-react";
 import { numberToHebrewDaf } from "@/lib/masechet-list";
 import { getHebrewDay, getHebrewMonthsForGregorian } from "@/lib/hebrew-date";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const HEBREW_MONTHS = [
   "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
