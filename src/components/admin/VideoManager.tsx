@@ -24,6 +24,7 @@ const PAGE_SIZE = 20;
 
 export function VideoManager() {
   const [search, setSearch] = useState("");
+  const [showIncomplete, setShowIncomplete] = useState(true);
   const [page, setPage] = useState(0);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<{ masechet: string; daf: string; title: string }>({
