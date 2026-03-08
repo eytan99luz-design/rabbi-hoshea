@@ -11,12 +11,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen } from "lucide-react";
+import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen, Sparkles } from "lucide-react";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { VideoManager } from "@/components/admin/VideoManager";
 import { SiteSettings } from "@/components/admin/SiteSettings";
 import { SubscribersList } from "@/components/admin/SubscribersList";
 import { YouTubeSync } from "@/components/admin/YouTubeSync";
+import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -211,7 +212,7 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="videos" dir="rtl">
-          <TabsList className="w-full grid grid-cols-5 mb-6">
+          <TabsList className="w-full grid grid-cols-6 mb-6">
             <TabsTrigger value="videos" className="font-body text-xs sm:text-sm gap-1">
               <Video className="h-4 w-4" />
               <span className="hidden sm:inline">שיעורים</span>
@@ -243,8 +244,9 @@ const Admin = () => {
             <ArticlesList />
           </TabsContent>
 
-          <TabsContent value="sync">
+          <TabsContent value="sync" className="space-y-6">
             <YouTubeSync />
+            <SummaryGenerator />
           </TabsContent>
 
           <TabsContent value="subscribers">
