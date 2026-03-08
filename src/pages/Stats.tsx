@@ -88,7 +88,8 @@ const Stats = () => {
     { icon: Clock, label: "דקות צפייה", value: totalMinutes, color: "text-purple-500" },
   ];
 
-  return (
+  if (authLoading) return null;
+  if (!user) return <Navigate to="/login" replace />;
     <div className="min-h-screen bg-background">
       <SEOHead title="הסטטיסטיקות שלי" path="/stats" />
       <Header />
