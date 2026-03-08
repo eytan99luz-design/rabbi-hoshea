@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { LogIn, Upload, Trash2, FileText, Loader2 } from "lucide-react";
 import { SubscribersList } from "@/components/admin/SubscribersList";
+import { YouTubeSync } from "@/components/admin/YouTubeSync";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -242,6 +243,7 @@ const Admin = () => {
           </Button>
         </div>
         <div className="space-y-6">
+          <YouTubeSync />
           <ArticleUploadForm />
           <ArticlesList />
           <SubscribersList />
