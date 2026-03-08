@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Video {
@@ -10,6 +10,8 @@ export interface Video {
   thumbnail_url: string | null;
   published_at: string | null;
 }
+
+const PAGE_SIZE = 24;
 
 export function useVideos(masechet?: string, searchQuery?: string, daf?: number) {
   return useQuery({
@@ -36,6 +38,40 @@ export function useVideos(masechet?: string, searchQuery?: string, daf?: number)
       if (error) throw error;
       return data as Video[];
     },
+  });
+}
+
+export function useInfiniteVideos(masechet?: string, searchQuery?: string, daf?: number) {
+  return useInfiniteQuery({
+    queryKey: ["videos-infinite", masechet, searchQuery, daf],
+    queryFn: async ({ pageParam = 0 }) => {
+      let query = supabase
+        .from("videos")
+        .select("*")
+        .order("published_at", { ascending: false })
+        .range(pageParam, pageParam + PAGE_SIZE - 1);
+
+      if (masechet) {
+        query = query.eq("masechet", masechet);
+      }
+
+      if (daf) {
+        query = query.eq("daf", daf);
+      }
+
+      if (searchQuery) {
+        query = query.ilike("title", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as Video[];
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length < PAGE_SIZE) return undefined;
+      return allPages.length * PAGE_SIZE;
+    },
+    initialPageParam: 0,
   });
 }
 
