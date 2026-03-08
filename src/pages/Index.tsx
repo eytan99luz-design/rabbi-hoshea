@@ -327,6 +327,22 @@ const Index = () => {
         )}
       </section>
 
+      {/* Calendar */}
+      {!search && !showAiResults && (
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={fadeUp}
+          className="container px-4 py-10"
+        >
+          <h2 className="font-display text-xl font-bold text-foreground mb-6 flex items-center gap-2" dir="rtl">
+            📅 לוח שיעורים
+          </h2>
+          <LessonCalendar />
+        </motion.section>
+      )}
+
       {/* Recommendations */}
       {!search && !showAiResults && <RecommendedLessons />}
 
