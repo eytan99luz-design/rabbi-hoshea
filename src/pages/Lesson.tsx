@@ -12,6 +12,13 @@ import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: (() => void) | undefined;
+  }
+}
+
 const Lesson = () => {
   const { youtubeId } = useParams<{ youtubeId: string }>();
   const { data: video, isLoading } = useVideo(youtubeId || "");
