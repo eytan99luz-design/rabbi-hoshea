@@ -32,15 +32,14 @@ export function useVideos(masechet?: string, searchQuery?: string, daf?: number)
       }
 
       if (searchQuery) {
-        // Split into words and match each one for better results
+        // Search in both title and summary
         const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 1);
         if (words.length > 1) {
-          // Match all words individually (AND logic)
           for (const word of words) {
-            query = query.ilike("title", `%${word}%`);
+            query = query.or(`title.ilike.%${word}%,summary.ilike.%${word}%`);
           }
         } else {
-          query = query.ilike("title", `%${searchQuery}%`);
+          query = query.or(`title.ilike.%${searchQuery}%,summary.ilike.%${searchQuery}%`);
         }
       }
 
@@ -73,10 +72,10 @@ export function useInfiniteVideos(masechet?: string, searchQuery?: string, daf?:
         const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 1);
         if (words.length > 1) {
           for (const word of words) {
-            query = query.ilike("title", `%${word}%`);
+            query = query.or(`title.ilike.%${word}%,summary.ilike.%${word}%`);
           }
         } else {
-          query = query.ilike("title", `%${searchQuery}%`);
+          query = query.or(`title.ilike.%${searchQuery}%,summary.ilike.%${searchQuery}%`);
         }
       }
 

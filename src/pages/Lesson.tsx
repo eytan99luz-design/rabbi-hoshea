@@ -1,16 +1,24 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { Header } from "@/components/Header";
 import { SEOHead } from "@/components/SEOHead";
 import { ShareButtons } from "@/components/ShareButtons";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { AddToPlaylistButton } from "@/components/AddToPlaylistButton";
 import { useVideo, useAdjacentVideos } from "@/hooks/useVideos";
 import { useAuth } from "@/hooks/useAuth";
-import { useTrackWatch } from "@/hooks/useWatchHistory";
+import { useTrackWatch, useVideoProgress } from "@/hooks/useWatchHistory";
 import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: (() => void) | undefined;
+  }
+}
 
 const Lesson = () => {
   const { youtubeId } = useParams<{ youtubeId: string }>();
@@ -18,13 +26,95 @@ const Lesson = () => {
   const { data: adjacent } = useAdjacentVideos(video?.masechet ?? null, video?.daf ?? null);
   const { user } = useAuth();
   const trackWatch = useTrackWatch();
+  const { data: savedProgress } = useVideoProgress(video?.id);
+  const playerRef = useRef<any>(null);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hasResumedRef = useRef(false);
 
   // Track watch history
   useEffect(() => {
     if (video?.id && user) {
-      trackWatch.mutate(video.id);
+      trackWatch.mutate({ videoId: video.id });
     }
   }, [video?.id, user]);
+
+  // Reset resume flag when video changes
+  useEffect(() => {
+    hasResumedRef.current = false;
+  }, [youtubeId]);
+
+  // Load YouTube IFrame API
+  useEffect(() => {
+    if (!(window as any).YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(tag);
+    }
+  }, []);
+
+  // Initialize player when video is ready
+  useEffect(() => {
+    if (!video?.youtube_id) return;
+
+    const initPlayer = () => {
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
+      playerRef.current = new (window as any).YT.Player(`yt-player-${video.youtube_id}`, {
+        videoId: video.youtube_id,
+        playerVars: {
+          rel: 0,
+          modestbranding: 1,
+        },
+        events: {
+          onReady: (event: any) => {
+            // Resume from saved position
+            if (savedProgress && savedProgress > 10 && !hasResumedRef.current) {
+              hasResumedRef.current = true;
+              event.target.seekTo(savedProgress, true);
+            }
+          },
+          onStateChange: (event: any) => {
+            // When playing, save progress every 15 seconds
+            if (event.data === 1) { // PLAYING
+              if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+              progressIntervalRef.current = setInterval(() => {
+                if (playerRef.current && video?.id && user) {
+                  const currentTime = playerRef.current.getCurrentTime?.();
+                  if (currentTime) {
+                    trackWatch.mutate({ videoId: video.id, progressSeconds: currentTime });
+                  }
+                }
+              }, 15000);
+            } else {
+              // Paused or ended - save immediately
+              if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+              if (playerRef.current && video?.id && user) {
+                const currentTime = playerRef.current.getCurrentTime?.();
+                if (currentTime) {
+                  trackWatch.mutate({ videoId: video.id, progressSeconds: currentTime });
+                }
+              }
+            }
+          },
+        },
+      });
+    };
+
+    if ((window as any).YT && (window as any).YT.Player) {
+      initPlayer();
+    } else {
+      (window as any).onYouTubeIframeAPIReady = initPlayer;
+    }
+
+    return () => {
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch {}
+        playerRef.current = null;
+      }
+    };
+  }, [video?.youtube_id, savedProgress, user]);
 
   if (isLoading) {
     return (
@@ -82,13 +172,7 @@ const Lesson = () => {
 
         {/* YouTube Player */}
         <div className="aspect-video rounded-lg overflow-hidden bg-foreground/5 shadow-lg">
-          <iframe
-            src={`https://www.youtube.com/embed/${video.youtube_id}`}
-            title={video.title}
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <div id={`yt-player-${video.youtube_id}`} className="w-full h-full" />
         </div>
 
         <SEOHead
@@ -128,9 +212,11 @@ const Lesson = () => {
             </div>
             <div className="flex items-center gap-2">
               <FavoriteButton videoId={video.id} />
+              <AddToPlaylistButton videoId={video.id} />
               <ShareButtons
                 url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
                 title={video.title}
+                summary={video.summary || undefined}
               />
             </div>
           </div>
