@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Calendar, Play } from "lucide-react";
 import { numberToHebrewDaf } from "@/lib/masechet-list";
-import { getHebrewDay } from "@/lib/hebrew-date";
+import { getHebrewDay, getHebrewMonthsForGregorian } from "@/lib/hebrew-date";
 
 const HEBREW_MONTHS = [
   "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
@@ -88,9 +88,12 @@ export function LessonCalendar() {
           <Button variant="ghost" size="icon" onClick={nextMonth}>
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <h3 className="font-display text-lg font-bold text-foreground">
-            {HEBREW_MONTHS[month]} {year}
-          </h3>
+          <div className="text-center">
+            <h3 className="font-display text-lg font-bold text-foreground">
+              {HEBREW_MONTHS[month]} {year}
+            </h3>
+            <p className="text-xs text-muted-foreground font-body">{getHebrewMonthsForGregorian(year, month)}</p>
+          </div>
           <Button variant="ghost" size="icon" onClick={prevMonth}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
