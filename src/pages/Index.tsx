@@ -15,6 +15,7 @@ import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library, Sp
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RecommendedLessons } from "@/components/RecommendedLessons";
+import { LessonCalendar } from "@/components/LessonCalendar";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
