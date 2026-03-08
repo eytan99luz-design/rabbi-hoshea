@@ -88,9 +88,12 @@ export function LessonCalendar() {
           <Button variant="ghost" size="icon" onClick={nextMonth}>
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <h3 className="font-display text-lg font-bold text-foreground">
-            {HEBREW_MONTHS[month]} {year}
-          </h3>
+          <div className="text-center">
+            <h3 className="font-display text-lg font-bold text-foreground">
+              {HEBREW_MONTHS[month]} {year}
+            </h3>
+            <p className="text-xs text-muted-foreground font-body">{getHebrewMonthsForGregorian(year, month)}</p>
+          </div>
           <Button variant="ghost" size="icon" onClick={prevMonth}>
             <ChevronLeft className="h-4 w-4" />
           </Button>

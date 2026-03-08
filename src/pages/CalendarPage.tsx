@@ -99,9 +99,12 @@ export default function CalendarPage() {
               <Button variant="ghost" size="icon" onClick={nextMonth}>
                 <ChevronRight className="h-5 w-5" />
               </Button>
-              <h3 className="font-display text-xl font-bold text-foreground">
-                {HEBREW_MONTHS[month]} {year}
-              </h3>
+              <div className="text-center">
+                <h3 className="font-display text-xl font-bold text-foreground">
+                  {HEBREW_MONTHS[month]} {year}
+                </h3>
+                <p className="text-sm text-muted-foreground font-body">{getHebrewMonthsForGregorian(year, month)}</p>
+              </div>
               <Button variant="ghost" size="icon" onClick={prevMonth}>
                 <ChevronLeft className="h-5 w-5" />
               </Button>
