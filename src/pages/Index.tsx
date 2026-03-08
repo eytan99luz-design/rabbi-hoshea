@@ -40,6 +40,7 @@ const Index = () => {
   const [search, setSearch] = useState("");
   const { data: recentVideos, isLoading } = useVideos(undefined, search || undefined);
   const { data: masechtot } = useMasechtot();
+  const { data: siteSettings } = useSiteSettings();
 
   const topMasechtot = masechtot
     ? Object.entries(masechtot)
