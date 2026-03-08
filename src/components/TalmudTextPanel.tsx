@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useWikisourceText } from "@/hooks/useWikisourceText";
+import { useSefariaText, getSefariaLink } from "@/hooks/useSefariaText";
 import { numberToHebrewDaf } from "@/lib/masechet-list";
 import { BookOpen, ChevronRight, ChevronLeft, ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,9 @@ interface TalmudTextPanelProps {
 
 export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isLoading } = useWikisourceText(masechet, daf);
+  const { data, isLoading } = useSefariaText(masechet, daf);
   const hebrewDaf = numberToHebrewDaf(daf);
-
-  const wikisourceLink = `https://he.wikisource.org/wiki/${encodeURIComponent(`תלמוד_בבלי/מסכת_${masechet}/דף_${hebrewDaf}/א`)}`;
+  const sefariaLink = getSefariaLink(masechet, daf);
 
   if (!isOpen) {
     return (
@@ -46,11 +45,11 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
         </div>
         <div className="flex items-center gap-2">
           <a
-            href={wikisourceLink}
+            href={sefariaLink}
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-accent transition-colors"
-            title="פתח בוויקיטקסט"
+            title="פתח בספריא"
           >
             <ExternalLink className="h-4 w-4" />
           </a>
@@ -71,7 +70,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
           <div>
             <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground font-body">
-              הדף לא נמצא בוויקיטקסט
+              הדף לא נמצא בספריא
             </p>
           </div>
         </div>
@@ -88,21 +87,29 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
 
           <TabsContent value="amud-a" className="flex-1 min-h-0 mt-0">
             <ScrollArea className="h-full">
-              <div
-                className="p-4 text-foreground font-body text-sm leading-relaxed wikisource-content"
-                dir="rtl"
-                dangerouslySetInnerHTML={{ __html: data?.amudA || "" }}
-              />
+              <div className="p-4 space-y-3" dir="rtl">
+                {data?.amudA?.he.map((segment, i) => (
+                  <p
+                    key={i}
+                    className="text-foreground font-body text-sm leading-[2] sefaria-text"
+                    dangerouslySetInnerHTML={{ __html: segment }}
+                  />
+                ))}
+              </div>
             </ScrollArea>
           </TabsContent>
 
           <TabsContent value="amud-b" className="flex-1 min-h-0 mt-0">
             <ScrollArea className="h-full">
-              <div
-                className="p-4 text-foreground font-body text-sm leading-relaxed wikisource-content"
-                dir="rtl"
-                dangerouslySetInnerHTML={{ __html: data?.amudB || "" }}
-              />
+              <div className="p-4 space-y-3" dir="rtl">
+                {data?.amudB?.he.map((segment, i) => (
+                  <p
+                    key={i}
+                    className="text-foreground font-body text-sm leading-[2] sefaria-text"
+                    dangerouslySetInnerHTML={{ __html: segment }}
+                  />
+                ))}
+              </div>
             </ScrollArea>
           </TabsContent>
         </Tabs>
@@ -111,7 +118,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
       {/* Footer */}
       <div className="p-3 border-t border-border text-center">
         <p className="text-[10px] text-muted-foreground font-body">
-          מקור: <a href="https://he.wikisource.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-accent">ויקיטקסט</a> — רישיון CC BY-SA
+          מקור: <a href="https://www.sefaria.org.il" target="_blank" rel="noopener noreferrer" className="underline hover:text-accent">ספריא</a> — טקסט מהדורת ויליאם דוידסון
         </p>
       </div>
     </div>
