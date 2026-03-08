@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LessonNotes } from "@/components/LessonNotes";
 import { FollowMasechetButton } from "@/components/FollowMasechetButton";
+import { TalmudTextPanel } from "@/components/TalmudTextPanel";
 
 declare global {
   interface Window {
@@ -232,6 +233,11 @@ const Lesson = () => {
 
         {/* Personal Notes */}
         {video.id && <LessonNotes videoId={video.id} />}
+
+        {/* Talmud Text Panel */}
+        {video.masechet && video.daf && (
+          <TalmudTextPanel masechet={video.masechet} daf={video.daf} />
+        )}
 
         {/* Navigation */}
         {adjacent && (adjacent.prev || adjacent.next) && (
