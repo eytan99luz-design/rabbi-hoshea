@@ -234,6 +234,11 @@ const Lesson = () => {
         {/* Personal Notes */}
         {video.id && <LessonNotes videoId={video.id} />}
 
+        {/* Talmud Text Panel */}
+        {video.masechet && video.daf && (
+          <TalmudTextPanel masechet={video.masechet} daf={video.daf} />
+        )}
+
         {/* Navigation */}
         {adjacent && (adjacent.prev || adjacent.next) && (
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
