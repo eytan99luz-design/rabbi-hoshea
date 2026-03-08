@@ -7,6 +7,7 @@ import { EmailSubscribe } from "@/components/EmailSubscribe";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useVideos, useMasechtot } from "@/hooks/useVideos";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { getMasechetEnglish } from "@/lib/masechet-list";
 import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library } from "lucide-react";
 import { Button } from "@/components/ui/button";
