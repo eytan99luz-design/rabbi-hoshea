@@ -1,8 +1,12 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { SEOHead } from "@/components/SEOHead";
 import { ShareButtons } from "@/components/ShareButtons";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { useVideo, useAdjacentVideos } from "@/hooks/useVideos";
+import { useAuth } from "@/hooks/useAuth";
+import { useTrackWatch } from "@/hooks/useWatchHistory";
 import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +16,15 @@ const Lesson = () => {
   const { youtubeId } = useParams<{ youtubeId: string }>();
   const { data: video, isLoading } = useVideo(youtubeId || "");
   const { data: adjacent } = useAdjacentVideos(video?.masechet ?? null, video?.daf ?? null);
+  const { user } = useAuth();
+  const trackWatch = useTrackWatch();
+
+  // Track watch history
+  useEffect(() => {
+    if (video?.id && user) {
+      trackWatch.mutate(video.id);
+    }
+  }, [video?.id, user]);
 
   if (isLoading) {
     return (
@@ -103,10 +116,13 @@ const Lesson = () => {
                 </span>
               )}
             </div>
-            <ShareButtons
-              url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
-              title={video.title}
-            />
+            <div className="flex items-center gap-2">
+              <FavoriteButton videoId={video.id} />
+              <ShareButtons
+                url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
+                title={video.title}
+              />
+            </div>
           </div>
         </div>
 
