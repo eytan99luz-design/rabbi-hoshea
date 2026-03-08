@@ -212,6 +212,7 @@ const Lesson = () => {
             </div>
             <div className="flex items-center gap-2">
               <FavoriteButton videoId={video.id} />
+              <AddToPlaylistButton videoId={video.id} />
               <ShareButtons
                 url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
                 title={video.title}
