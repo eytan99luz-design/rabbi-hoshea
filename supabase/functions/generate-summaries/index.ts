@@ -139,6 +139,7 @@ Deno.serve(async (req) => {
       .from("videos")
       .select("id, youtube_id, title")
       .is("summary", null)
+      .eq("summary_edited", false)
       .order("published_at", { ascending: false });
 
     if (videoId) {
