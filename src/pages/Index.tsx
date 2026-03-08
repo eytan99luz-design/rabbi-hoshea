@@ -294,7 +294,7 @@ const Index = () => {
       <footer className="border-t border-border bg-card py-8">
         <div className="container px-4 text-center">
           <p className="text-sm text-muted-foreground font-body">
-            © {new Date().getFullYear()} שיעורי הרב הושע רבינוביץ׳
+            © {new Date().getFullYear()} {siteSettings?.footer_text || "שיעורי הרב הושע רבינוביץ׳"}
           </p>
         </div>
       </footer>
