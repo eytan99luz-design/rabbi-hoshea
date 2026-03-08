@@ -9,8 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { LogIn, Upload, Trash2, FileText, Loader2 } from "lucide-react";
+import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen } from "lucide-react";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
+import { VideoManager } from "@/components/admin/VideoManager";
+import { SiteSettings } from "@/components/admin/SiteSettings";
 import { SubscribersList } from "@/components/admin/SubscribersList";
 import { YouTubeSync } from "@/components/admin/YouTubeSync";
 
@@ -24,7 +28,6 @@ function AdminLogin() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      // Try signup if first time
       const { error: signupError } = await supabase.auth.signUp({
         email,
         password,
@@ -47,26 +50,11 @@ function AdminLogin() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <Label htmlFor="email" className="font-body" dir="rtl">אימייל</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="text-foreground"
-                placeholder="admin@example.com"
-                required
-              />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="text-foreground" placeholder="admin@example.com" required />
             </div>
             <div>
               <Label htmlFor="password" className="font-body" dir="rtl">סיסמה</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="text-foreground"
-                required
-              />
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="text-foreground" required />
             </div>
             <Button type="submit" className="w-full font-body" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4 ml-2" />}
@@ -90,9 +78,7 @@ function ArticleUploadForm() {
     if (!file) return;
     try {
       await uploadMutation.mutateAsync({ title, description, file });
-      setTitle("");
-      setDescription("");
-      setFile(null);
+      setTitle(""); setDescription(""); setFile(null);
       toast({ title: "המאמר הועלה בהצלחה" });
     } catch (err: any) {
       toast({ title: "שגיאה", description: err.message, variant: "destructive" });
@@ -108,31 +94,15 @@ function ArticleUploadForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label className="font-body" dir="rtl">כותרת</Label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="text-foreground"
-              dir="rtl"
-              required
-            />
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} className="text-foreground" dir="rtl" required />
           </div>
           <div>
             <Label className="font-body" dir="rtl">תיאור</Label>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="text-foreground"
-              dir="rtl"
-            />
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="text-foreground" dir="rtl" />
           </div>
           <div>
             <Label className="font-body" dir="rtl">קובץ (PDF)</Label>
-            <Input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="text-foreground"
-            />
+            <Input type="file" accept=".pdf,.doc,.docx" onChange={(e) => setFile(e.target.files?.[0] || null)} className="text-foreground" />
           </div>
           <Button type="submit" disabled={uploadMutation.isPending || !file} className="font-body">
             {uploadMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin ml-2" /> : <Upload className="h-4 w-4 ml-2" />}
@@ -180,12 +150,7 @@ function ArticlesList() {
                     </p>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(article)}
-                  disabled={deleteMutation.isPending}
-                >
+                <Button variant="ghost" size="icon" onClick={() => handleDelete(article)} disabled={deleteMutation.isPending}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
@@ -220,11 +185,7 @@ const Admin = () => {
         <div className="container px-4 py-16 text-center">
           <h2 className="font-display text-2xl font-bold text-foreground mb-2" dir="rtl">אין הרשאה</h2>
           <p className="text-muted-foreground font-body" dir="rtl">אין לך הרשאת מנהל לדף זה</p>
-          <Button
-            variant="outline"
-            className="mt-4 font-body"
-            onClick={() => supabase.auth.signOut()}
-          >
+          <Button variant="outline" className="mt-4 font-body" onClick={() => supabase.auth.signOut()}>
             התנתק
           </Button>
         </div>
@@ -235,19 +196,65 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container px-4 py-6 max-w-2xl">
+      <div className="container px-4 py-6 max-w-5xl">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="font-display text-2xl font-bold text-foreground" dir="rtl">ניהול</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground" dir="rtl">לוח בקרה</h1>
           <Button variant="ghost" size="sm" className="font-body" onClick={() => supabase.auth.signOut()}>
             התנתק
           </Button>
         </div>
-        <div className="space-y-6">
-          <YouTubeSync />
-          <ArticleUploadForm />
-          <ArticlesList />
-          <SubscribersList />
+
+        {/* Dashboard Stats */}
+        <div className="mb-6">
+          <AdminDashboard />
         </div>
+
+        {/* Tabs */}
+        <Tabs defaultValue="videos" dir="rtl">
+          <TabsList className="w-full grid grid-cols-5 mb-6">
+            <TabsTrigger value="videos" className="font-body text-xs sm:text-sm gap-1">
+              <Video className="h-4 w-4" />
+              <span className="hidden sm:inline">שיעורים</span>
+            </TabsTrigger>
+            <TabsTrigger value="articles" className="font-body text-xs sm:text-sm gap-1">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">מאמרים</span>
+            </TabsTrigger>
+            <TabsTrigger value="sync" className="font-body text-xs sm:text-sm gap-1">
+              <RefreshCw className="h-4 w-4" />
+              <span className="hidden sm:inline">סנכרון</span>
+            </TabsTrigger>
+            <TabsTrigger value="subscribers" className="font-body text-xs sm:text-sm gap-1">
+              <Mail className="h-4 w-4" />
+              <span className="hidden sm:inline">נרשמים</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="font-body text-xs sm:text-sm gap-1">
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">הגדרות</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="videos">
+            <VideoManager />
+          </TabsContent>
+
+          <TabsContent value="articles" className="space-y-6">
+            <ArticleUploadForm />
+            <ArticlesList />
+          </TabsContent>
+
+          <TabsContent value="sync">
+            <YouTubeSync />
+          </TabsContent>
+
+          <TabsContent value="subscribers">
+            <SubscribersList />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <SiteSettings />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
