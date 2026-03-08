@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Calendar, Play } from "lucide-react";
 import { numberToHebrewDaf } from "@/lib/masechet-list";
+import { getHebrewDay } from "@/lib/hebrew-date";
 
 const HEBREW_MONTHS = [
   "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
@@ -128,6 +129,9 @@ export function LessonCalendar() {
                 `}
               >
                 <span className={`${hasVideos ? "font-bold" : ""} text-[11px] leading-tight`}>{day}</span>
+                <span className={`text-[7px] leading-tight ${selected ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                  {getHebrewDay(year, month, day)}
+                </span>
                 {hasVideos && (
                   <div className="flex flex-col items-center gap-0 mt-0.5 w-full overflow-hidden">
                     {videosByDay[day].slice(0, 1).map((v) => (
