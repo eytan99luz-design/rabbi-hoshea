@@ -107,6 +107,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Daf Yomi Banner */}
+      {!search && <DafYomiBanner />}
+
       {/* Stats Bar */}
       {totalVideos > 0 && (
         <section className="border-b border-border bg-card">
