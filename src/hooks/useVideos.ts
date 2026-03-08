@@ -31,7 +31,16 @@ export function useVideos(masechet?: string, searchQuery?: string, daf?: number)
       }
 
       if (searchQuery) {
-        query = query.ilike("title", `%${searchQuery}%`);
+        // Split into words and match each one for better results
+        const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 1);
+        if (words.length > 1) {
+          // Match all words individually (AND logic)
+          for (const word of words) {
+            query = query.ilike("title", `%${word}%`);
+          }
+        } else {
+          query = query.ilike("title", `%${searchQuery}%`);
+        }
       }
 
       const { data, error } = await query;
