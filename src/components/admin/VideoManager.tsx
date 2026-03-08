@@ -35,13 +35,17 @@ export function VideoManager() {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-videos", search, page],
+    queryKey: ["admin-videos", search, page, showIncomplete],
     queryFn: async () => {
       let query = supabase
         .from("videos")
         .select("*", { count: "exact" })
         .order("published_at", { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+      if (showIncomplete) {
+        query = query.or("masechet.is.null,daf.is.null");
+      }
 
       if (search) {
         query = query.ilike("title", `%${search}%`);
