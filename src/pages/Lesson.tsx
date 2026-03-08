@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { SEOHead } from "@/components/SEOHead";
 import { ShareButtons } from "@/components/ShareButtons";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { AddToPlaylistButton } from "@/components/AddToPlaylistButton";
 import { useVideo, useAdjacentVideos } from "@/hooks/useVideos";
 import { useAuth } from "@/hooks/useAuth";
 import { useTrackWatch, useVideoProgress } from "@/hooks/useWatchHistory";
