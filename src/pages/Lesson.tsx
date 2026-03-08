@@ -26,7 +26,7 @@ const Lesson = () => {
   const { user } = useAuth();
   const trackWatch = useTrackWatch();
   const { data: savedProgress } = useVideoProgress(video?.id);
-  const playerRef = useRef<YT.Player | null>(null);
+  const playerRef = useRef<any>(null);
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hasResumedRef = useRef(false);
 
