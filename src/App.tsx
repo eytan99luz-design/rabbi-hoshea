@@ -8,6 +8,7 @@ import Browse from "./pages/Browse";
 import Lesson from "./pages/Lesson";
 import Articles from "./pages/Articles";
 import Admin from "./pages/Admin";
+import Masechet from "./pages/Masechet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/browse" element={<Browse />} />
           <Route path="/lesson/:youtubeId" element={<Lesson />} />
           <Route path="/articles" element={<Articles />} />
+          <Route path="/masechet/:name" element={<Masechet />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
