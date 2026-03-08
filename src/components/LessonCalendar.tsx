@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Calendar, Play } from "lucide-react";
+import { numberToHebrewDaf } from "@/lib/masechet-list";
 
 const HEBREW_MONTHS = [
   "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
@@ -132,11 +133,11 @@ export function LessonCalendar() {
                     {videosByDay[day].slice(0, 1).map((v) => (
                       <span
                         key={v.id}
-                        className={`text-[7px] leading-[9px] truncate max-w-full px-0.5 ${
+                        className={`text-[9px] leading-[11px] font-bold truncate max-w-full px-0.5 ${
                           selected ? "text-primary-foreground" : "text-accent"
                         }`}
                       >
-                        {v.masechet ? `${v.masechet}${v.daf ? ` ${v.daf}` : ""}` : ""}
+                        {v.masechet ? `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}` : ""}
                       </span>
                     ))}
                     {count > 1 && (
@@ -181,7 +182,7 @@ export function LessonCalendar() {
                   {video.masechet && (
                     <p className="text-xs text-muted-foreground font-body">
                       {video.masechet}
-                      {video.daf ? ` דף ${video.daf}` : ""}
+                      {video.daf ? ` דף ${numberToHebrewDaf(video.daf)}` : ""}
                     </p>
                   )}
                 </div>
