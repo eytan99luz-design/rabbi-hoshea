@@ -244,8 +244,9 @@ const Admin = () => {
             <ArticlesList />
           </TabsContent>
 
-          <TabsContent value="sync">
+          <TabsContent value="sync" className="space-y-6">
             <YouTubeSync />
+            <SummaryGenerator />
           </TabsContent>
 
           <TabsContent value="subscribers">
