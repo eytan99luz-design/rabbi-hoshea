@@ -188,6 +188,11 @@ const Lesson = () => {
               <span className="font-display font-bold text-accent">תקציר: </span>
               {video.summary}
             </p>
+            <p className="text-[10px] text-muted-foreground mt-2 font-body">
+              {(video as any).summary_edited
+                ? "✏️ תקציר זה נערך על ידי המנהל"
+                : "🤖 תקציר זה נוצר באמצעות בינה מלאכותית"}
+            </p>
           </div>
         )}
 
