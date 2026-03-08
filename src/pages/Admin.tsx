@@ -243,6 +243,7 @@ const Admin = () => {
           </Button>
         </div>
         <div className="space-y-6">
+          <YouTubeSync />
           <ArticleUploadForm />
           <ArticlesList />
           <SubscribersList />
