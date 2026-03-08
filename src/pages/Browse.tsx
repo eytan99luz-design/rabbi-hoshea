@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { MasechetFilter } from "@/components/MasechetFilter";
 import { DafFilter } from "@/components/DafFilter";
-import { useVideos, useMasechtot, useDafimForMasechet } from "@/hooks/useVideos";
+import { useInfiniteVideos, useMasechtot, useDafimForMasechet } from "@/hooks/useVideos";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Filter, X } from "lucide-react";
+import { Filter, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -20,9 +20,37 @@ const Browse = () => {
   const [selectedDaf, setSelectedDaf] = useState<number | null>(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const { data: videos, isLoading } = useVideos(selectedMasechet || undefined, search || undefined, selectedDaf || undefined);
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteVideos(selectedMasechet || undefined, search || undefined, selectedDaf || undefined);
+
   const { data: masechtot } = useMasechtot();
   const { data: dafim } = useDafimForMasechet(selectedMasechet);
+
+  const videos = data?.pages.flat() ?? [];
+
+  // Intersection observer for infinite scroll
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const handleIntersect = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [hasNextPage, isFetchingNextPage, fetchNextPage]
+  );
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(handleIntersect, { rootMargin: "200px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [handleIntersect]);
 
   useEffect(() => {
     if (selectedMasechet) {
@@ -71,7 +99,6 @@ const Browse = () => {
           </div>
           <div className="flex items-center gap-3">
             <SearchBar value={search} onChange={setSearch} />
-            {/* Mobile filter trigger */}
             <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="lg:hidden shrink-0">
@@ -114,12 +141,10 @@ const Browse = () => {
         )}
 
         <div className="flex gap-6">
-          {/* Desktop sidebar */}
           <aside className="hidden lg:block w-64 shrink-0">
             <FilterContent />
           </aside>
 
-          {/* Video grid */}
           <div className="flex-1">
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -133,12 +158,20 @@ const Browse = () => {
                   </div>
                 ))}
               </div>
-            ) : videos && videos.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                {videos.map((video) => (
-                  <VideoCard key={video.id} video={video} />
-                ))}
-              </div>
+            ) : videos.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {videos.map((video) => (
+                    <VideoCard key={video.id} video={video} />
+                  ))}
+                </div>
+                {/* Sentinel for infinite scroll */}
+                <div ref={sentinelRef} className="py-8 flex justify-center">
+                  {isFetchingNextPage && (
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  )}
+                </div>
+              </>
             ) : (
               <div className="text-center py-16">
                 <p className="text-muted-foreground font-body" dir="rtl">
