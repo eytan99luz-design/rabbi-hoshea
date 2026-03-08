@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { Search, Pencil, Trash2, Save, X, ChevronLeft, ChevronRight, Video } from "lucide-react";
+import { Search, Pencil, Trash2, Save, X, ChevronLeft, ChevronRight, Video, AlertTriangle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +24,7 @@ const PAGE_SIZE = 20;
 
 export function VideoManager() {
   const [search, setSearch] = useState("");
+  const [showIncomplete, setShowIncomplete] = useState(true);
   const [page, setPage] = useState(0);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<{ masechet: string; daf: string; title: string }>({
@@ -34,13 +35,17 @@ export function VideoManager() {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-videos", search, page],
+    queryKey: ["admin-videos", search, page, showIncomplete],
     queryFn: async () => {
       let query = supabase
         .from("videos")
         .select("*", { count: "exact" })
         .order("published_at", { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+      if (showIncomplete) {
+        query = query.or("masechet.is.null,daf.is.null");
+      }
 
       if (search) {
         query = query.ilike("title", `%${search}%`);
@@ -116,6 +121,27 @@ export function VideoManager() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Filter buttons */}
+        <div className="flex gap-2" dir="rtl">
+          <Button
+            variant={showIncomplete ? "default" : "outline"}
+            size="sm"
+            onClick={() => { setShowIncomplete(true); setPage(0); }}
+            className="font-body gap-1"
+          >
+            <AlertTriangle className="h-4 w-4" />
+            חסרי מסכת/דף ({showIncomplete ? data?.total || "..." : "..."})
+          </Button>
+          <Button
+            variant={!showIncomplete ? "default" : "outline"}
+            size="sm"
+            onClick={() => { setShowIncomplete(false); setPage(0); }}
+            className="font-body"
+          >
+            כל השיעורים
+          </Button>
+        </div>
+
         <div className="relative">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
