@@ -81,7 +81,7 @@ const Index = () => {
             className="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight"
             dir="rtl"
           >
-            בית המדרש הדיגיטלי
+            {siteSettings?.hero_title || "בית המדרש הדיגיטלי"}
           </motion.h1>
           <motion.p
             initial="hidden"
