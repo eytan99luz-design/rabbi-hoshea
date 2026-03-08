@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
 import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { MasechetFilter } from "@/components/MasechetFilter";
