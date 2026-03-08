@@ -147,7 +147,7 @@ const Index = () => {
             {topMasechtot.map(([masechet, count]) => (
               <Link
                 key={masechet}
-                to={`/browse?masechet=${encodeURIComponent(masechet)}`}
+                to={`/masechet/${encodeURIComponent(masechet)}`}
                 className="group border border-border rounded-lg p-4 bg-card hover:border-accent hover:shadow-md transition-all text-center"
               >
                 <h3 className="font-display text-lg font-bold text-foreground group-hover:text-accent transition-colors" dir="rtl">
