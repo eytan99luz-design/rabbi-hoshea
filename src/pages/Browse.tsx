@@ -88,6 +88,7 @@ const Browse = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="עיון בשיעורים" description="חיפוש ועיון בכל שיעורי הגמרא לפי מסכת ודף" path="/browse" />
       <Header />
 
       <div className="container px-4 py-6">
