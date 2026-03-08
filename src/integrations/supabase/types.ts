@@ -137,6 +137,7 @@ export type Database = {
           id: string
           masechet: string | null
           published_at: string | null
+          summary: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -148,6 +149,7 @@ export type Database = {
           id?: string
           masechet?: string | null
           published_at?: string | null
+          summary?: string | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string
@@ -159,6 +161,7 @@ export type Database = {
           id?: string
           masechet?: string | null
           published_at?: string | null
+          summary?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
