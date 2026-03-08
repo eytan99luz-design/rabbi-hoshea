@@ -64,12 +64,12 @@ export function SummaryGenerator() {
           </div>
         )}
         <div className="flex gap-2 flex-wrap">
-          <Button onClick={() => handleGenerate(10)} disabled={generating || missing === 0} className="font-body" size="sm">
+          <Button onClick={() => handleGenerate(5)} disabled={generating || missing === 0} className="font-body" size="sm">
             {generating ? <Loader2 className="h-4 w-4 animate-spin ml-2" /> : <FileText className="h-4 w-4 ml-2" />}
-            סכם 10 שיעורים
+            סכם 5 שיעורים
           </Button>
-          <Button onClick={() => handleGenerate(50)} disabled={generating || missing === 0} variant="outline" className="font-body" size="sm">
-            סכם 50 שיעורים
+          <Button onClick={() => handleGenerate(10)} disabled={generating || missing === 0} variant="outline" className="font-body" size="sm">
+            סכם 10 שיעורים
           </Button>
         </div>
         {result && (
