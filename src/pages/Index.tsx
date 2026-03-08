@@ -48,7 +48,7 @@ const Index = () => {
         .slice(0, 8)
     : [];
 
-  const totalVideos = masechtot ? Object.values(masechtot).reduce((a, b) => a + b, 0) : 0;
+  const totalVideos = totalCount ?? (masechtot ? Object.values(masechtot).reduce((a, b) => a + b, 0) : 0);
   const totalMasechtot = masechtot ? Object.keys(masechtot).length : 0;
   const latestVideo = recentVideos?.[0];
 
