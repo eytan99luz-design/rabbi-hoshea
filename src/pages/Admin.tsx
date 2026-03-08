@@ -17,6 +17,7 @@ import { VideoManager } from "@/components/admin/VideoManager";
 import { SiteSettings } from "@/components/admin/SiteSettings";
 import { SubscribersList } from "@/components/admin/SubscribersList";
 import { YouTubeSync } from "@/components/admin/YouTubeSync";
+import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
