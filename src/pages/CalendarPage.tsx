@@ -139,6 +139,9 @@ export default function CalendarPage() {
                         `}
                       >
                         <span className={`${hasVideos ? "font-bold" : ""} text-sm leading-tight`}>{day}</span>
+                        <span className={`text-[9px] leading-tight ${selected ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                          {getHebrewDay(year, month, day)}
+                        </span>
                         {hasVideos && (
                           <div className="flex flex-col items-center gap-0 mt-1 w-full overflow-hidden">
                             {videosByDay[day].slice(0, 1).map((v) => (

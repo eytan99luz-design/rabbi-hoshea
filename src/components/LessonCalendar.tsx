@@ -129,6 +129,9 @@ export function LessonCalendar() {
                 `}
               >
                 <span className={`${hasVideos ? "font-bold" : ""} text-[11px] leading-tight`}>{day}</span>
+                <span className={`text-[7px] leading-tight ${selected ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                  {getHebrewDay(year, month, day)}
+                </span>
                 {hasVideos && (
                   <div className="flex flex-col items-center gap-0 mt-0.5 w-full overflow-hidden">
                     {videosByDay[day].slice(0, 1).map((v) => (
