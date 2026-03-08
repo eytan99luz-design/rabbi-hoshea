@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { Search, Pencil, Trash2, Save, X, ChevronLeft, ChevronRight, Video } from "lucide-react";
+import { Search, Pencil, Trash2, Save, X, ChevronLeft, ChevronRight, Video, AlertTriangle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
