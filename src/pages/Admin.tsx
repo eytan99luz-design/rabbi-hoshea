@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen, Sparkles } from "lucide-react";
+import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen, Sparkles, Calendar } from "lucide-react";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { VideoManager } from "@/components/admin/VideoManager";
 import { SiteSettings } from "@/components/admin/SiteSettings";
@@ -19,6 +19,7 @@ import { SubscribersList } from "@/components/admin/SubscribersList";
 import { YouTubeSync } from "@/components/admin/YouTubeSync";
 import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
 import { TagManager } from "@/components/admin/TagManager";
+import { VideoDateManager } from "@/components/admin/VideoDateManager";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -213,10 +214,14 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="videos" dir="rtl">
-          <TabsList className="w-full grid grid-cols-7 mb-6">
+          <TabsList className="w-full grid grid-cols-8 mb-6">
             <TabsTrigger value="videos" className="font-body text-xs sm:text-sm gap-1">
               <Video className="h-4 w-4" />
               <span className="hidden sm:inline">שיעורים</span>
+            </TabsTrigger>
+            <TabsTrigger value="dates" className="font-body text-xs sm:text-sm gap-1">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">תאריכים</span>
             </TabsTrigger>
             <TabsTrigger value="tags" className="font-body text-xs sm:text-sm gap-1">
               <BookOpen className="h-4 w-4" />
@@ -242,6 +247,10 @@ const Admin = () => {
 
           <TabsContent value="videos">
             <VideoManager />
+          </TabsContent>
+
+          <TabsContent value="dates">
+            <VideoDateManager />
           </TabsContent>
 
           <TabsContent value="tags">
