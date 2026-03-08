@@ -71,10 +71,14 @@ async function callAI(prompt: string, systemPrompt: string, apiKey: string, maxR
       });
 
       if (response.status === 429) {
-        const waitTime = Math.pow(2, attempt + 1) * 5000; // 10s, 20s, 40s
-        console.log(`Rate limited, waiting ${waitTime/1000}s before retry ${attempt + 1}/${maxRetries}`);
-        await new Promise(resolve => setTimeout(resolve, waitTime));
-        continue;
+        if (attempt < maxRetries - 1) {
+          const waitTime = (attempt + 1) * 3000; // 3s, 6s
+          console.log(`Rate limited, waiting ${waitTime/1000}s (retry ${attempt + 1}/${maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          continue;
+        }
+        console.error("Rate limited, all retries exhausted");
+        return null;
       }
 
       if (response.status === 402) {
