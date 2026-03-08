@@ -121,6 +121,27 @@ export function VideoManager() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Filter buttons */}
+        <div className="flex gap-2" dir="rtl">
+          <Button
+            variant={showIncomplete ? "default" : "outline"}
+            size="sm"
+            onClick={() => { setShowIncomplete(true); setPage(0); }}
+            className="font-body gap-1"
+          >
+            <AlertTriangle className="h-4 w-4" />
+            חסרי מסכת/דף ({showIncomplete ? data?.total || "..." : "..."})
+          </Button>
+          <Button
+            variant={!showIncomplete ? "default" : "outline"}
+            size="sm"
+            onClick={() => { setShowIncomplete(false); setPage(0); }}
+            className="font-body"
+          >
+            כל השיעורים
+          </Button>
+        </div>
+
         <div className="relative">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
