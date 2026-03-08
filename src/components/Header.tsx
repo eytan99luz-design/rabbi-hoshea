@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Heart, LogIn, LogOut, User, BarChart3, ListMusic } from "lucide-react";
+import { BookOpen, Heart, LogIn, LogOut, User, BarChart3, ListMusic, Calendar } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,9 @@ export function Header() {
           </Link>
           <Link to="/browse" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors">
             עיון
+          </Link>
+          <Link to="/calendar" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors hidden sm:block">
+            לוח שיעורים
           </Link>
           <Link to="/articles" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors hidden sm:block">
             מאמרים
