@@ -1,0 +1,1 @@
+ALTER TABLE public.watch_history ADD COLUMN progress_seconds integer NOT NULL DEFAULT 0;
