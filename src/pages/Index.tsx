@@ -71,7 +71,7 @@ const Index = () => {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/20 text-accent mb-6"
           >
             <BookOpen className="h-4 w-4" />
-            <span className="text-sm font-body font-medium">שיעורי גמרא יומיים</span>
+            <span className="text-sm font-body font-medium">{siteSettings?.hero_badge || "שיעורי גמרא יומיים"}</span>
           </motion.div>
           <motion.h1
             initial="hidden"
