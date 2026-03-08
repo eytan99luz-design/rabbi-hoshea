@@ -133,7 +133,7 @@ export function LessonCalendar() {
                     {videosByDay[day].slice(0, 1).map((v) => (
                       <span
                         key={v.id}
-                        className={`text-[9px] leading-[11px] font-bold truncate max-w-full px-0.5 ${
+                        className={`text-[12px] leading-[14px] font-bold truncate max-w-full px-0.5 ${
                           selected ? "text-primary-foreground" : "text-accent"
                         }`}
                       >
