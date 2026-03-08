@@ -94,6 +94,62 @@ export type Database = {
           },
         ]
       }
+      lesson_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_notes_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      masechet_follows: {
+        Row: {
+          created_at: string
+          id: string
+          masechet: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          masechet: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          masechet?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       playlist_items: {
         Row: {
           added_at: string

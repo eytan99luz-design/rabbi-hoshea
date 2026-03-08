@@ -12,6 +12,8 @@ import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LessonNotes } from "@/components/LessonNotes";
+import { FollowMasechetButton } from "@/components/FollowMasechetButton";
 
 declare global {
   interface Window {
@@ -216,6 +218,7 @@ const Lesson = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
+              {video.masechet && <FollowMasechetButton masechet={video.masechet} />}
               <FavoriteButton videoId={video.id} />
               <AddToPlaylistButton videoId={video.id} />
               <ShareButtons
@@ -226,6 +229,9 @@ const Lesson = () => {
             </div>
           </div>
         </div>
+
+        {/* Personal Notes */}
+        {video.id && <LessonNotes videoId={video.id} />}
 
         {/* Navigation */}
         {adjacent && (adjacent.prev || adjacent.next) && (

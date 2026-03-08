@@ -18,6 +18,7 @@ import { SiteSettings } from "@/components/admin/SiteSettings";
 import { SubscribersList } from "@/components/admin/SubscribersList";
 import { YouTubeSync } from "@/components/admin/YouTubeSync";
 import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
+import { TagManager } from "@/components/admin/TagManager";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -212,10 +213,14 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="videos" dir="rtl">
-          <TabsList className="w-full grid grid-cols-6 mb-6">
+          <TabsList className="w-full grid grid-cols-7 mb-6">
             <TabsTrigger value="videos" className="font-body text-xs sm:text-sm gap-1">
               <Video className="h-4 w-4" />
               <span className="hidden sm:inline">שיעורים</span>
+            </TabsTrigger>
+            <TabsTrigger value="tags" className="font-body text-xs sm:text-sm gap-1">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">תגיות</span>
             </TabsTrigger>
             <TabsTrigger value="articles" className="font-body text-xs sm:text-sm gap-1">
               <FileText className="h-4 w-4" />
@@ -237,6 +242,10 @@ const Admin = () => {
 
           <TabsContent value="videos">
             <VideoManager />
+          </TabsContent>
+
+          <TabsContent value="tags">
+            <TagManager />
           </TabsContent>
 
           <TabsContent value="articles" className="space-y-6">
