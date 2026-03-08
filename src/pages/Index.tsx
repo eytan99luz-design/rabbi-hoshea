@@ -8,9 +8,10 @@ import { VideoCard } from "@/components/VideoCard";
 import { SearchBar } from "@/components/SearchBar";
 import { DafYomiBanner } from "@/components/DafYomiBanner";
 import { useVideos, useMasechtot, useTotalVideoCount } from "@/hooks/useVideos";
+import { useAiSearch } from "@/hooks/useAiSearch";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { getMasechetEnglish } from "@/lib/masechet-list";
-import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library } from "lucide-react";
+import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -43,6 +44,7 @@ const Index = () => {
   const { data: masechtot } = useMasechtot();
   const { data: siteSettings } = useSiteSettings();
   const { data: totalCount } = useTotalVideoCount();
+  const aiSearch = useAiSearch();
 
   const topMasechtot = masechtot
     ? Object.entries(masechtot)
@@ -53,6 +55,21 @@ const Index = () => {
   const totalVideos = totalCount ?? (masechtot ? Object.values(masechtot).reduce((a, b) => a + b, 0) : 0);
   const totalMasechtot = masechtot ? Object.keys(masechtot).length : 0;
   const latestVideo = recentVideos?.[0];
+
+  // Determine which videos to show
+  const showAiResults = aiSearch.data && aiSearch.data.results.length > 0;
+  const displayVideos = showAiResults ? aiSearch.data!.results : recentVideos;
+
+  const handleAiSearch = (query: string) => {
+    aiSearch.search(query);
+  };
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    if (!val) {
+      aiSearch.clear();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -102,16 +119,35 @@ const Index = () => {
             custom={3}
             className="flex justify-center"
           >
-            <SearchBar value={search} onChange={setSearch} />
+            <SearchBar
+              value={search}
+              onChange={handleSearchChange}
+              onAiSearch={handleAiSearch}
+              isAiSearching={aiSearch.isSearching}
+            />
           </motion.div>
         </div>
       </section>
 
       {/* Daf Yomi Banner */}
-      {!search && <DafYomiBanner />}
+      {!search && !showAiResults && <DafYomiBanner />}
+
+      {/* AI Search Interpretation */}
+      {aiSearch.data?.interpretation && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="container px-4 pt-6"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 border border-accent/20" dir="rtl">
+            <Sparkles className="h-4 w-4 text-accent shrink-0" />
+            <span className="text-sm font-body text-foreground">{aiSearch.data.interpretation}</span>
+          </div>
+        </motion.div>
+      )}
 
       {/* Stats Bar */}
-      {totalVideos > 0 && (
+      {totalVideos > 0 && !search && !showAiResults && (
         <section className="border-b border-border bg-card">
           <div className="container px-4 py-5">
             <motion.div
@@ -140,7 +176,7 @@ const Index = () => {
       )}
 
       {/* Featured Latest Video */}
-      {latestVideo && !search && (
+      {latestVideo && !search && !showAiResults && (
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -193,7 +229,7 @@ const Index = () => {
       )}
 
       {/* Quick Masechet Access */}
-      {topMasechtot.length > 0 && (
+      {topMasechtot.length > 0 && !search && !showAiResults && (
         <section className="container px-4 py-10">
           <motion.div
             initial="hidden"
@@ -236,7 +272,7 @@ const Index = () => {
         </section>
       )}
 
-      {/* Recent Lessons */}
+      {/* Search Results / Recent Lessons */}
       <section className="container px-4 py-10">
         <motion.h2
           initial="hidden"
@@ -246,9 +282,14 @@ const Index = () => {
           className="font-display text-xl font-bold text-foreground mb-6"
           dir="rtl"
         >
-          {search ? `תוצאות חיפוש` : "שיעורים אחרונים"}
+          {showAiResults ? (
+            <span className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-accent" />
+              תוצאות חיפוש חכם ({aiSearch.data!.results.length})
+            </span>
+          ) : search ? "תוצאות חיפוש" : "שיעורים אחרונים"}
         </motion.h2>
-        {isLoading ? (
+        {isLoading || aiSearch.isSearching ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="rounded-lg overflow-hidden border border-border bg-card">
@@ -260,7 +301,7 @@ const Index = () => {
               </div>
             ))}
           </div>
-        ) : recentVideos && recentVideos.length > 0 ? (
+        ) : displayVideos && displayVideos.length > 0 ? (
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -268,7 +309,7 @@ const Index = () => {
             variants={staggerContainer}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
           >
-            {recentVideos.slice(search ? 0 : 1, search ? 12 : 13).map((video, i) => (
+            {(showAiResults ? displayVideos : displayVideos.slice(search ? 0 : 1, search ? 12 : 13)).map((video, i) => (
               <motion.div key={video.id} variants={scaleIn} custom={i}>
                 <VideoCard video={video} />
               </motion.div>
@@ -278,7 +319,7 @@ const Index = () => {
           <div className="text-center py-16">
             <SearchIcon className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground font-body" dir="rtl">
-              {search ? "לא נמצאו שיעורים. נסה חיפוש אחר." : "אין שיעורים עדיין. סנכרן את הערוץ כדי להתחיל."}
+              {search || showAiResults ? "לא נמצאו שיעורים. נסה חיפוש אחר." : "אין שיעורים עדיין. סנכרן את הערוץ כדי להתחיל."}
             </p>
           </div>
         )}
