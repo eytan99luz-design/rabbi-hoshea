@@ -7,15 +7,17 @@ interface ShareButtonsProps {
   summary?: string;
 }
 
-export function ShareButtons({ url, title }: ShareButtonsProps) {
+export function ShareButtons({ url, title, summary }: ShareButtonsProps) {
   const encodedUrl = encodeURIComponent(url);
-  const encodedTitle = encodeURIComponent(title);
+  const whatsappText = encodeURIComponent(
+    summary ? `${title}\n\n${summary}\n\n${url}` : `${title} ${url}`
+  );
 
   const links = [
     {
       name: "WhatsApp",
       icon: MessageCircle,
-      href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+      href: `https://wa.me/?text=${whatsappText}`,
       className: "hover:bg-green-600/10 hover:text-green-600",
     },
     {

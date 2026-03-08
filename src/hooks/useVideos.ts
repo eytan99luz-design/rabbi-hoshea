@@ -72,10 +72,10 @@ export function useInfiniteVideos(masechet?: string, searchQuery?: string, daf?:
         const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 1);
         if (words.length > 1) {
           for (const word of words) {
-            query = query.ilike("title", `%${word}%`);
+            query = query.or(`title.ilike.%${word}%,summary.ilike.%${word}%`);
           }
         } else {
-          query = query.ilike("title", `%${searchQuery}%`);
+          query = query.or(`title.ilike.%${searchQuery}%,summary.ilike.%${searchQuery}%`);
         }
       }
 

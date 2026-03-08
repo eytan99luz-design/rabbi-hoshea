@@ -131,6 +131,7 @@ const Lesson = () => {
               <ShareButtons
                 url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
                 title={video.title}
+                summary={video.summary || undefined}
               />
             </div>
           </div>
