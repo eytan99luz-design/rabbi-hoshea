@@ -97,6 +97,16 @@ const Lesson = () => {
           path={`/lesson/${video.youtube_id}`}
         />
 
+        {/* Summary */}
+        {video.summary && (
+          <div className="mt-5 p-4 rounded-lg bg-accent/5 border border-accent/20" dir="rtl">
+            <p className="text-sm font-body text-foreground leading-relaxed">
+              <span className="font-display font-bold text-accent">תקציר: </span>
+              {video.summary}
+            </p>
+          </div>
+        )}
+
         {/* Title and Meta */}
         <div className="mt-6" dir="rtl">
           <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
