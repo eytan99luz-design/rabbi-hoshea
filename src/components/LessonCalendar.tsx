@@ -133,11 +133,11 @@ export function LessonCalendar() {
                     {videosByDay[day].slice(0, 1).map((v) => (
                       <span
                         key={v.id}
-                        className={`text-[7px] leading-[9px] truncate max-w-full px-0.5 ${
+                        className={`text-[9px] leading-[11px] font-bold truncate max-w-full px-0.5 ${
                           selected ? "text-primary-foreground" : "text-accent"
                         }`}
                       >
-                        {v.masechet ? `${v.masechet}${v.daf ? ` ${v.daf}` : ""}` : ""}
+                        {v.masechet ? `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}` : ""}
                       </span>
                     ))}
                     {count > 1 && (
