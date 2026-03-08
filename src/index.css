@@ -97,3 +97,28 @@
     @apply font-display;
   }
 }
+
+/* Wikisource Talmud text styling */
+.wikisource-content {
+  line-height: 1.9;
+}
+
+.wikisource-content a {
+  color: hsl(var(--accent));
+  text-decoration: underline;
+  text-decoration-color: hsl(var(--accent) / 0.3);
+}
+
+.wikisource-content a:hover {
+  text-decoration-color: hsl(var(--accent));
+}
+
+.wikisource-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.wikisource-content .mw-editsection,
+.wikisource-content .noprint {
+  display: none;
+}
