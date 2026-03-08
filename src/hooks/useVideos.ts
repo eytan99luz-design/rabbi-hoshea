@@ -144,17 +144,12 @@ export function useMasechtot() {
   return useQuery({
     queryKey: ["masechtot"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("videos")
-        .select("masechet")
-        .not("masechet", "is", null);
+      const { data, error } = await supabase.rpc("get_masechet_counts");
       if (error) throw error;
 
       const counts: Record<string, number> = {};
-      for (const row of data) {
-        if (row.masechet) {
-          counts[row.masechet] = (counts[row.masechet] || 0) + 1;
-        }
+      for (const row of data as { masechet: string; count: number }[]) {
+        counts[row.masechet] = Number(row.count);
       }
       return counts;
     },
