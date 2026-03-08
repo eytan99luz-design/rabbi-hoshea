@@ -41,6 +41,7 @@ const Index = () => {
   const { data: recentVideos, isLoading } = useVideos(undefined, search || undefined);
   const { data: masechtot } = useMasechtot();
   const { data: siteSettings } = useSiteSettings();
+  const { data: totalCount } = useTotalVideoCount();
 
   const topMasechtot = masechtot
     ? Object.entries(masechtot)
