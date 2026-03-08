@@ -34,6 +34,9 @@ export function Header() {
           <Link to="/browse" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors">
             עיון
           </Link>
+          <Link to="/calendar" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors hidden sm:block">
+            לוח שיעורים
+          </Link>
           <Link to="/articles" className="text-sm font-body text-primary-foreground/80 hover:text-primary-foreground transition-colors hidden sm:block">
             מאמרים
           </Link>
