@@ -45,7 +45,7 @@ export function Header() {
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" dir="rtl">
+              <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                   <Link to="/my-lessons" className="flex items-center gap-2 font-body cursor-pointer">
                     <Heart className="h-4 w-4" />
