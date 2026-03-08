@@ -31,12 +31,10 @@ function hebrewToNumber(str: string): number | null {
 
 function parseTitleForMasechetDaf(title: string): { masechet: string | null; daf: number | null } {
   for (const m of MASECHET_LIST) {
-    // Match patterns like: מנחות דף כב, מנחות מדף כב, מנחות כב
     const regex = new RegExp(`${m}\\s+(?:מ?דף\\s+)?([\\p{N}]+|[א-ת]{1,3})(?:\\s|$|\\.)`, 'u');
     const match = title.match(regex);
     if (match) {
       const dafStr = match[1];
-      // Skip common Hebrew words that aren't daf numbers
       if (['עמ', 'של', 'על', 'את', 'לא'].includes(dafStr)) continue;
       const num = parseInt(dafStr, 10);
       if (!isNaN(num)) return { masechet: m, daf: num };
@@ -64,6 +62,12 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get all existing youtube_ids to know which are new
+    const { data: existingVideos } = await supabase
+      .from("videos")
+      .select("youtube_id");
+    const existingIds = new Set((existingVideos || []).map(v => v.youtube_id));
+
     // Get uploads playlist for the channel
     const channelRes = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${CHANNEL_ID}&key=${YOUTUBE_API_KEY}`
@@ -79,7 +83,7 @@ Deno.serve(async (req) => {
 
     let pageToken: string | undefined;
     let totalInserted = 0;
-    let totalUpdated = 0;
+    let consecutiveExisting = 0;
 
     do {
       const url = new URL("https://www.googleapis.com/youtube/v3/playlistItems");
@@ -97,34 +101,41 @@ Deno.serve(async (req) => {
       for (const item of data.items) {
         const snippet = item.snippet;
         const youtubeId = snippet.resourceId.videoId;
+
+        // Skip already existing videos - don't overwrite manual edits
+        if (existingIds.has(youtubeId)) {
+          consecutiveExisting++;
+          continue;
+        }
+
+        consecutiveExisting = 0;
         const title = snippet.title;
         const thumbnailUrl = snippet.thumbnails?.high?.url || snippet.thumbnails?.medium?.url || snippet.thumbnails?.default?.url;
         const publishedAt = snippet.publishedAt;
-
         const { masechet, daf } = parseTitleForMasechetDaf(title);
 
-        const { error } = await supabase.from("videos").upsert(
-          {
-            youtube_id: youtubeId,
-            title,
-            masechet,
-            daf,
-            thumbnail_url: thumbnailUrl,
-            published_at: publishedAt,
-          },
-          { onConflict: "youtube_id" }
-        );
+        const { error } = await supabase.from("videos").insert({
+          youtube_id: youtubeId,
+          title,
+          masechet,
+          daf,
+          thumbnail_url: thumbnailUrl,
+          published_at: publishedAt,
+        });
 
         if (!error) {
           totalInserted++;
         }
       }
 
+      // If we've seen 100+ consecutive existing videos, stop - we're caught up
+      if (consecutiveExisting >= 100) break;
+
       pageToken = data.nextPageToken;
     } while (pageToken);
 
     return new Response(
-      JSON.stringify({ success: true, totalProcessed: totalInserted }),
+      JSON.stringify({ success: true, newVideos: totalInserted }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
