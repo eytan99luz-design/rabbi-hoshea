@@ -181,7 +181,7 @@ Deno.serve(async (req) => {
       }
 
       // Wait between videos to respect rate limits
-      await new Promise(resolve => setTimeout(resolve, 6000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
     }
 
     return new Response(JSON.stringify({ processed, skipped, total: videos.length }), {
