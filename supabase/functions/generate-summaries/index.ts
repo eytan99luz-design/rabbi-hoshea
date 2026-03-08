@@ -51,7 +51,7 @@ async function fetchYouTubeCaptions(youtubeId: string, apiKey: string): Promise<
   }
 }
 
-async function callAI(prompt: string, systemPrompt: string, apiKey: string, maxRetries = 3): Promise<string | null> {
+async function callAI(prompt: string, systemPrompt: string, apiKey: string, maxRetries = 2): Promise<string | null> {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
