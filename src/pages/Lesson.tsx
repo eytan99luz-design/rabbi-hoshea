@@ -1,12 +1,12 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { Header } from "@/components/Header";
 import { SEOHead } from "@/components/SEOHead";
 import { ShareButtons } from "@/components/ShareButtons";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { useVideo, useAdjacentVideos } from "@/hooks/useVideos";
 import { useAuth } from "@/hooks/useAuth";
-import { useTrackWatch } from "@/hooks/useWatchHistory";
+import { useTrackWatch, useVideoProgress } from "@/hooks/useWatchHistory";
 import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
