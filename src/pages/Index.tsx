@@ -326,6 +326,9 @@ const Index = () => {
         )}
       </section>
 
+      {/* Recommendations */}
+      {!search && !showAiResults && <RecommendedLessons />}
+
       {/* Subscribe */}
       <motion.section
         initial="hidden"

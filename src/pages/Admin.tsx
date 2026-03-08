@@ -244,6 +244,10 @@ const Admin = () => {
             <VideoManager />
           </TabsContent>
 
+          <TabsContent value="tags">
+            <TagManager />
+          </TabsContent>
+
           <TabsContent value="articles" className="space-y-6">
             <ArticleUploadForm />
             <ArticlesList />

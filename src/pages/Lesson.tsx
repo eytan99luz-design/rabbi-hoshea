@@ -230,6 +230,9 @@ const Lesson = () => {
           </div>
         </div>
 
+        {/* Personal Notes */}
+        {video.id && <LessonNotes videoId={video.id} />}
+
         {/* Navigation */}
         {adjacent && (adjacent.prev || adjacent.next) && (
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
