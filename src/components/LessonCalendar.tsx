@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Calendar, Play } from "lucide-react";
 import { numberToHebrewDaf } from "@/lib/masechet-list";
-import { getHebrewDay } from "@/lib/hebrew-date";
+import { getHebrewDay, getHebrewMonthsForGregorian } from "@/lib/hebrew-date";
 
 const HEBREW_MONTHS = [
   "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
