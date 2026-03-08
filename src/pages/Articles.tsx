@@ -42,9 +42,11 @@ const Articles = () => {
                 </div>
                 <div dir="rtl">
                   <h3 className="font-display text-lg font-bold text-foreground">{article.title}</h3>
-                  {article.description && (
+                  {article.summary ? (
+                    <p className="text-sm text-muted-foreground font-body mt-1 leading-relaxed line-clamp-3">{article.summary}</p>
+                  ) : article.description ? (
                     <p className="text-sm text-muted-foreground font-body mt-1">{article.description}</p>
-                  )}
+                  ) : null}
                   <p className="text-xs text-muted-foreground font-body mt-2">
                     {new Date(article.created_at).toLocaleDateString("he-IL")}
                   </p>
