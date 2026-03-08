@@ -126,36 +126,61 @@ export default function CalendarPage() {
                 const selected = selectedDay === day;
 
                 return (
-                  <button
-                    key={day}
-                    onClick={() => setSelectedDay(selected ? null : day)}
-                    className={`
-                      aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-body relative transition-all
-                      ${isToday(day) ? "ring-2 ring-accent" : ""}
-                      ${selected ? "bg-primary text-primary-foreground" : hasVideos ? "bg-accent/10 hover:bg-accent/20 text-foreground" : "hover:bg-muted text-muted-foreground"}
-                    `}
-                  >
-                    <span className={`${hasVideos ? "font-bold" : ""} text-sm leading-tight`}>{day}</span>
-                    {hasVideos && (
-                      <div className="flex flex-col items-center gap-0 mt-1 w-full overflow-hidden">
-                        {videosByDay[day].slice(0, 1).map((v) => (
-                          <span
-                            key={v.id}
-                            className={`text-[11px] leading-[13px] font-bold truncate max-w-full px-1 ${
-                              selected ? "text-primary-foreground" : "text-accent"
-                            }`}
-                          >
-                            {v.masechet ? `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}` : ""}
-                          </span>
-                        ))}
-                        {count > 1 && (
-                          <span className={`text-[9px] leading-[11px] ${selected ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                            +{count - 1}
-                          </span>
+                  <HoverCard openDelay={200} closeDelay={100}>
+                    <HoverCardTrigger asChild>
+                      <button
+                        key={day}
+                        onClick={() => setSelectedDay(selected ? null : day)}
+                        className={`
+                          aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-body relative transition-all
+                          ${isToday(day) ? "ring-2 ring-accent" : ""}
+                          ${selected ? "bg-primary text-primary-foreground" : hasVideos ? "bg-accent/10 hover:bg-accent/20 text-foreground" : "hover:bg-muted text-muted-foreground"}
+                        `}
+                      >
+                        <span className={`${hasVideos ? "font-bold" : ""} text-sm leading-tight`}>{day}</span>
+                        {hasVideos && (
+                          <div className="flex flex-col items-center gap-0 mt-1 w-full overflow-hidden">
+                            {videosByDay[day].slice(0, 1).map((v) => (
+                              <span
+                                key={v.id}
+                                className={`text-[11px] leading-[13px] font-bold truncate max-w-full px-1 ${
+                                  selected ? "text-primary-foreground" : "text-accent"
+                                }`}
+                              >
+                                {v.masechet ? `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}` : ""}
+                              </span>
+                            ))}
+                            {count > 1 && (
+                              <span className={`text-[9px] leading-[11px] ${selected ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                                +{count - 1}
+                              </span>
+                            )}
+                          </div>
                         )}
-                      </div>
+                      </button>
+                    </HoverCardTrigger>
+                    {hasVideos && (
+                      <HoverCardContent side="bottom" align="center" className="w-72 text-right" dir="rtl">
+                        <div className="space-y-2">
+                          {videosByDay[day].map((v) => (
+                            <div key={v.id} className="space-y-1">
+                              <p className="font-display font-bold text-xs text-foreground line-clamp-1">{v.title}</p>
+                              {v.masechet && (
+                                <p className="text-[11px] text-accent font-body font-semibold">
+                                  {v.masechet}{v.daf ? ` דף ${numberToHebrewDaf(v.daf)}` : ""}
+                                </p>
+                              )}
+                              {v.summary && (
+                                <p className="text-[11px] text-muted-foreground font-body leading-relaxed line-clamp-3">
+                                  {v.summary}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </HoverCardContent>
                     )}
-                  </button>
+                  </HoverCard>
                 );
               })}
             </div>
