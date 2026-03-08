@@ -27,6 +27,8 @@ export function VideoManager() {
   const [showIncomplete, setShowIncomplete] = useState(true);
   const [page, setPage] = useState(0);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editSummaryId, setEditSummaryId] = useState<string | null>(null);
+  const [editSummaryValue, setEditSummaryValue] = useState("");
   const [editValues, setEditValues] = useState<{ masechet: string; daf: string; title: string }>({
     masechet: "",
     daf: "",
