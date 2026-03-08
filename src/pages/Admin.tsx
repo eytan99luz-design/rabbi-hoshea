@@ -244,6 +244,7 @@ const Admin = () => {
         <div className="space-y-6">
           <ArticleUploadForm />
           <ArticlesList />
+          <SubscribersList />
         </div>
       </div>
     </div>
