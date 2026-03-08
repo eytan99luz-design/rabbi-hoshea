@@ -1,7 +1,8 @@
+import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { getMasechetEnglish } from "@/lib/masechet-list";
-import { BookOpen } from "lucide-react";
+import { BookOpen, ExternalLink } from "lucide-react";
 
 interface MasechetFilterProps {
   masechtot: Record<string, number>;
