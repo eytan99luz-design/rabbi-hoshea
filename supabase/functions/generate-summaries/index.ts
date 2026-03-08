@@ -202,8 +202,8 @@ Deno.serve(async (req) => {
         skipped++;
       }
 
-      // Small delay to avoid rate limits
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Delay to avoid AI gateway rate limits
+      await new Promise(resolve => setTimeout(resolve, 4000));
     }
 
     return new Response(JSON.stringify({ processed, skipped, total: videos.length }), {
