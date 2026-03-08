@@ -218,6 +218,7 @@ const Lesson = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
+              {video.masechet && <FollowMasechetButton masechet={video.masechet} />}
               <FavoriteButton videoId={video.id} />
               <AddToPlaylistButton videoId={video.id} />
               <ShareButtons
