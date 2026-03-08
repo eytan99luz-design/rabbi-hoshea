@@ -95,10 +95,29 @@ export function LessonCalendar() {
           <Button variant="ghost" size="icon" onClick={nextMonth}>
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <div className="text-center">
-            <h3 className="font-display text-lg font-bold text-foreground">
-              {HEBREW_MONTHS[month]} {year}
-            </h3>
+          <div className="text-center flex flex-col items-center gap-0.5">
+            <div className="flex items-center gap-1">
+              <Select value={String(month)} onValueChange={(v) => setCurrentDate(new Date(year, Number(v), 1))}>
+                <SelectTrigger className="h-7 w-auto gap-1 border-none shadow-none font-display text-base font-bold text-foreground px-1.5">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {HEBREW_MONTHS.map((m, i) => (
+                    <SelectItem key={i} value={String(i)}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={String(year)} onValueChange={(v) => setCurrentDate(new Date(Number(v), month, 1))}>
+                <SelectTrigger className="h-7 w-auto gap-1 border-none shadow-none font-display text-base font-bold text-foreground px-1.5">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 11 }, (_, i) => year - 5 + i).map((y) => (
+                    <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <p className="text-xs text-muted-foreground font-body">{getHebrewMonthsForGregorian(year, month)}</p>
           </div>
           <Button variant="ghost" size="icon" onClick={prevMonth}>
