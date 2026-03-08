@@ -12,6 +12,8 @@ import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ChevronRight, ChevronLeft, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LessonNotes } from "@/components/LessonNotes";
+import { FollowMasechetButton } from "@/components/FollowMasechetButton";
 
 declare global {
   interface Window {
