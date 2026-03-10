@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LessonNotes } from "@/components/LessonNotes";
 import { FollowMasechetButton } from "@/components/FollowMasechetButton";
 import { TalmudTextPanel } from "@/components/TalmudTextPanel";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 declare global {
   interface Window {
