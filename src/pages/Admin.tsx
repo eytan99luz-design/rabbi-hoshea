@@ -21,6 +21,7 @@ import { YouTubeSync } from "@/components/admin/YouTubeSync";
 import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
 import { TagManager } from "@/components/admin/TagManager";
 import { VideoDateManager } from "@/components/admin/VideoDateManager";
+import { QuestionManager } from "@/components/admin/QuestionManager";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
