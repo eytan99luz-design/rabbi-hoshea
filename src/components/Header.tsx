@@ -62,6 +62,12 @@ export function Header() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
+                  <Link to="/messages" className="flex items-center gap-2 font-body cursor-pointer">
+                    <MessageCircle className="h-4 w-4" />
+                    הודעות
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/stats" className="flex items-center gap-2 font-body cursor-pointer">
                     <BarChart3 className="h-4 w-4" />
                     סטטיסטיקות

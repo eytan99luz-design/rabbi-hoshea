@@ -309,6 +309,7 @@ const Lesson = () => {
               </div>
             </div>
             {video.id && <LessonNotes videoId={video.id} />}
+            {video.id && <LessonQuestionForm videoId={video.id} />}
           </div>
         )}
       </div>

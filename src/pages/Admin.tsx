@@ -376,6 +376,10 @@ const Admin = () => {
             <SubscribersList />
           </TabsContent>
 
+          <TabsContent value="questions">
+            <QuestionManager />
+          </TabsContent>
+
           <TabsContent value="settings">
             <SiteSettings />
           </TabsContent>
