@@ -315,7 +315,7 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="videos" dir="rtl">
-          <TabsList className="w-full grid grid-cols-8 mb-6">
+          <TabsList className="w-full grid grid-cols-9 mb-6">
             <TabsTrigger value="videos" className="font-body text-xs sm:text-sm gap-1">
               <Video className="h-4 w-4" />
               <span className="hidden sm:inline">שיעורים</span>
