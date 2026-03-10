@@ -24,7 +24,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
   }
 
   return (
-    <div className="mt-8 rounded-xl border border-border bg-card shadow-sm" dir="rtl">
+    <div className="rounded-xl border border-border bg-card shadow-sm lg:flex lg:flex-col lg:h-full" dir="rtl">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border bg-accent/5 rounded-t-xl">
         <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
           </div>
         </div>
       ) : (
-        <Tabs defaultValue="amud-a" className="w-full">
+        <Tabs defaultValue="amud-a" className="w-full flex-1 flex flex-col min-h-0">
           <TabsList className="mx-4 mt-3 grid grid-cols-2 w-auto">
             <TabsTrigger value="amud-a" className="font-body" disabled={!data?.amudA}>
               עמוד א׳
@@ -104,7 +104,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
           </TabsList>
 
           <TabsContent value="amud-a">
-            <div className="p-4 space-y-3 max-h-[600px] overflow-y-auto">
+            <div className="p-4 space-y-3 max-h-[500px] lg:max-h-none lg:overflow-y-auto overflow-y-auto">
               {data?.amudA?.he.map((segment, i) => (
                 <p
                   key={i}
@@ -116,7 +116,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
           </TabsContent>
 
           <TabsContent value="amud-b">
-            <div className="p-4 space-y-3 max-h-[600px] overflow-y-auto">
+            <div className="p-4 space-y-3 max-h-[500px] lg:max-h-none lg:overflow-y-auto overflow-y-auto">
               {data?.amudB?.he.map((segment, i) => (
                 <p
                   key={i}
