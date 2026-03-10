@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Heart, LogIn, LogOut, User, BarChart3, ListMusic, Calendar } from "lucide-react";
+import { BookOpen, Heart, LogIn, LogOut, User, BarChart3, ListMusic, Calendar, MessageCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
