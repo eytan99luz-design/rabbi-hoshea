@@ -340,6 +340,10 @@ const Admin = () => {
               <Mail className="h-4 w-4" />
               <span className="hidden sm:inline">נרשמים</span>
             </TabsTrigger>
+            <TabsTrigger value="questions" className="font-body text-xs sm:text-sm gap-1">
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">שאלות</span>
+            </TabsTrigger>
             <TabsTrigger value="settings" className="font-body text-xs sm:text-sm gap-1">
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">הגדרות</span>
