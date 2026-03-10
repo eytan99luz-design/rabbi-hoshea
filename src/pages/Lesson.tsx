@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LessonNotes } from "@/components/LessonNotes";
 import { FollowMasechetButton } from "@/components/FollowMasechetButton";
 import { TalmudTextPanel } from "@/components/TalmudTextPanel";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 declare global {
   interface Window {
@@ -182,96 +183,130 @@ const Lesson = () => {
 
       {/* Split View: Video + Text */}
       <div className="container px-4 pb-8 max-w-7xl">
-        <div className={`flex flex-col ${video.masechet && video.daf ? 'lg:flex-row-reverse' : ''} gap-6`}>
-          {/* Right side (RTL): Video + Meta */}
-          <div className={`${video.masechet && video.daf ? 'lg:w-[58%]' : 'w-full max-w-4xl mx-auto'} flex-shrink-0`}>
-            {/* YouTube Player */}
-            <div className="aspect-video rounded-lg overflow-hidden bg-foreground/5 shadow-lg sticky top-4">
+        {video.masechet && video.daf ? (
+          <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-lg">
+            {/* Right side (RTL): Talmud Text */}
+            <ResizablePanel defaultSize={42} minSize={25} maxSize={60}>
+              <div className="h-full overflow-hidden">
+                <TalmudTextPanel masechet={video.masechet} daf={video.daf} />
+              </div>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            {/* Left side (RTL): Video + Meta */}
+            <ResizablePanel defaultSize={58} minSize={40}>
+              <div className="pr-4 overflow-y-auto h-full">
+                {/* YouTube Player */}
+                <div className="aspect-video rounded-lg overflow-hidden bg-foreground/5 shadow-lg sticky top-4">
+                  <div id={`yt-player-${video.youtube_id}`} className="w-full h-full" />
+                </div>
+
+                {/* Summary */}
+                {video.summary && (
+                  <div className="mt-5 p-4 rounded-lg bg-accent/5 border border-accent/20" dir="rtl">
+                    <p className="text-sm font-body text-foreground leading-relaxed">
+                      <span className="font-display font-bold text-accent">תקציר: </span>
+                      {video.summary}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground mt-2 font-body">
+                      {(video as any).summary_edited
+                        ? "✏️ תקציר זה נערך על ידי המנהל"
+                        : "🤖 תקציר זה נוצר באמצעות בינה מלאכותית"}
+                    </p>
+                  </div>
+                )}
+
+                {/* Title and Meta */}
+                <div className="mt-5" dir="rtl">
+                  <h1 className="font-display text-xl md:text-2xl font-bold text-foreground leading-relaxed">
+                    {video.title}
+                  </h1>
+                  <div className="flex items-center justify-between flex-wrap gap-3 mt-3">
+                    <div className="flex items-center gap-3">
+                      {video.masechet && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/15 text-accent font-body text-sm font-medium">
+                          <BookOpen className="h-3.5 w-3.5" />
+                          {getMasechetEnglish(video.masechet)}
+                        </span>
+                      )}
+                      {video.daf && (
+                        <span className="text-sm text-muted-foreground font-body">
+                          דף {numberToHebrewDaf(video.daf)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {video.masechet && <FollowMasechetButton masechet={video.masechet} />}
+                      <FavoriteButton videoId={video.id} />
+                      <AddToPlaylistButton videoId={video.id} />
+                      <ShareButtons
+                        url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
+                        title={video.title}
+                        summary={video.summary || undefined}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Personal Notes */}
+                {video.id && <LessonNotes videoId={video.id} />}
+
+                {/* Navigation */}
+                {adjacent && (adjacent.prev || adjacent.next) && (
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+                    {adjacent.prev ? (
+                      <Link to={`/lesson/${adjacent.prev.youtube_id}`}>
+                        <Button variant="outline" className="font-body">
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                          דף {numberToHebrewDaf(adjacent.prev.daf!)}
+                        </Button>
+                      </Link>
+                    ) : <div />}
+                    {adjacent.next ? (
+                      <Link to={`/lesson/${adjacent.next.youtube_id}`}>
+                        <Button variant="outline" className="font-body">
+                          דף {numberToHebrewDaf(adjacent.next.daf!)}
+                          <ChevronLeft className="h-4 w-4 mr-1" />
+                        </Button>
+                      </Link>
+                    ) : <div />}
+                  </div>
+                )}
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          /* No masechet/daf - full width video */
+          <div className="max-w-4xl mx-auto">
+            <div className="aspect-video rounded-lg overflow-hidden bg-foreground/5 shadow-lg">
               <div id={`yt-player-${video.youtube_id}`} className="w-full h-full" />
             </div>
-
-            {/* Summary */}
             {video.summary && (
               <div className="mt-5 p-4 rounded-lg bg-accent/5 border border-accent/20" dir="rtl">
                 <p className="text-sm font-body text-foreground leading-relaxed">
                   <span className="font-display font-bold text-accent">תקציר: </span>
                   {video.summary}
                 </p>
-                <p className="text-[10px] text-muted-foreground mt-2 font-body">
-                  {(video as any).summary_edited
-                    ? "✏️ תקציר זה נערך על ידי המנהל"
-                    : "🤖 תקציר זה נוצר באמצעות בינה מלאכותית"}
-                </p>
               </div>
             )}
-
-            {/* Title and Meta */}
             <div className="mt-5" dir="rtl">
               <h1 className="font-display text-xl md:text-2xl font-bold text-foreground leading-relaxed">
                 {video.title}
               </h1>
-              <div className="flex items-center justify-between flex-wrap gap-3 mt-3">
-                <div className="flex items-center gap-3">
-                  {video.masechet && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/15 text-accent font-body text-sm font-medium">
-                      <BookOpen className="h-3.5 w-3.5" />
-                      {getMasechetEnglish(video.masechet)}
-                    </span>
-                  )}
-                  {video.daf && (
-                    <span className="text-sm text-muted-foreground font-body">
-                      דף {numberToHebrewDaf(video.daf)}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {video.masechet && <FollowMasechetButton masechet={video.masechet} />}
-                  <FavoriteButton videoId={video.id} />
-                  <AddToPlaylistButton videoId={video.id} />
-                  <ShareButtons
-                    url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
-                    title={video.title}
-                    summary={video.summary || undefined}
-                  />
-                </div>
+              <div className="flex items-center gap-2 mt-3">
+                <FavoriteButton videoId={video.id} />
+                <AddToPlaylistButton videoId={video.id} />
+                <ShareButtons
+                  url={`https://rabbi-hoshea.lovable.app/lesson/${video.youtube_id}`}
+                  title={video.title}
+                  summary={video.summary || undefined}
+                />
               </div>
             </div>
-
-            {/* Personal Notes */}
             {video.id && <LessonNotes videoId={video.id} />}
-
-            {/* Navigation */}
-            {adjacent && (adjacent.prev || adjacent.next) && (
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
-                {adjacent.prev ? (
-                  <Link to={`/lesson/${adjacent.prev.youtube_id}`}>
-                    <Button variant="outline" className="font-body">
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                      דף {numberToHebrewDaf(adjacent.prev.daf!)}
-                    </Button>
-                  </Link>
-                ) : <div />}
-                {adjacent.next ? (
-                  <Link to={`/lesson/${adjacent.next.youtube_id}`}>
-                    <Button variant="outline" className="font-body">
-                      דף {numberToHebrewDaf(adjacent.next.daf!)}
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                    </Button>
-                  </Link>
-                ) : <div />}
-              </div>
-            )}
           </div>
-
-          {/* Left side (RTL): Talmud Text */}
-          {video.masechet && video.daf && (
-            <div className="lg:w-[42%] flex-shrink-0">
-              <div className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-hidden">
-                <TalmudTextPanel masechet={video.masechet} daf={video.daf} />
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
