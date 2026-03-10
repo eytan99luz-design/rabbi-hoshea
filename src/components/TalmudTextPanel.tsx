@@ -93,7 +93,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
           </div>
         </div>
       ) : (
-        <Tabs defaultValue="amud-a" className="w-full">
+        <Tabs defaultValue="amud-a" className="w-full flex-1 flex flex-col min-h-0">
           <TabsList className="mx-4 mt-3 grid grid-cols-2 w-auto">
             <TabsTrigger value="amud-a" className="font-body" disabled={!data?.amudA}>
               עמוד א׳
