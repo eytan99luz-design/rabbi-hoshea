@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LessonNotes } from "@/components/LessonNotes";
 import { FollowMasechetButton } from "@/components/FollowMasechetButton";
 import { TalmudTextPanel } from "@/components/TalmudTextPanel";
+import { LessonQuestionForm } from "@/components/LessonQuestionForm";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 declare global {
@@ -252,6 +253,9 @@ const Lesson = () => {
                 {/* Personal Notes */}
                 {video.id && <LessonNotes videoId={video.id} />}
 
+                {/* Ask Question */}
+                {video.id && <LessonQuestionForm videoId={video.id} />}
+
                 {/* Navigation */}
                 {adjacent && (adjacent.prev || adjacent.next) && (
                   <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
@@ -305,6 +309,7 @@ const Lesson = () => {
               </div>
             </div>
             {video.id && <LessonNotes videoId={video.id} />}
+            {video.id && <LessonQuestionForm videoId={video.id} />}
           </div>
         )}
       </div>

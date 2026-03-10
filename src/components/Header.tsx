@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Heart, LogIn, LogOut, User, BarChart3, ListMusic, Calendar } from "lucide-react";
+import { BookOpen, Heart, LogIn, LogOut, User, BarChart3, ListMusic, Calendar, MessageCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,12 @@ export function Header() {
                   <Link to="/playlists" className="flex items-center gap-2 font-body cursor-pointer">
                     <ListMusic className="h-4 w-4" />
                     פלייליסטים
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/messages" className="flex items-center gap-2 font-body cursor-pointer">
+                    <MessageCircle className="h-4 w-4" />
+                    הודעות
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

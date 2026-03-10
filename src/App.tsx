@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Stats from "./pages/Stats";
 import Playlists from "./pages/Playlists";
 import CalendarPage from "./pages/CalendarPage";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/stats" element={<Stats />} />
           <Route path="/playlists" element={<Playlists />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />

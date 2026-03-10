@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen, Sparkles, Calendar, Pencil, Save, X } from "lucide-react";
+import { LogIn, Upload, Trash2, FileText, Loader2, LayoutDashboard, Video, Settings, Mail, RefreshCw, BookOpen, Sparkles, Calendar, Pencil, Save, X, MessageCircle } from "lucide-react";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { VideoManager } from "@/components/admin/VideoManager";
 import { SiteSettings } from "@/components/admin/SiteSettings";
@@ -21,6 +21,7 @@ import { YouTubeSync } from "@/components/admin/YouTubeSync";
 import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
 import { TagManager } from "@/components/admin/TagManager";
 import { VideoDateManager } from "@/components/admin/VideoDateManager";
+import { QuestionManager } from "@/components/admin/QuestionManager";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -314,7 +315,7 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="videos" dir="rtl">
-          <TabsList className="w-full grid grid-cols-8 mb-6">
+          <TabsList className="w-full grid grid-cols-9 mb-6">
             <TabsTrigger value="videos" className="font-body text-xs sm:text-sm gap-1">
               <Video className="h-4 w-4" />
               <span className="hidden sm:inline">שיעורים</span>
@@ -338,6 +339,10 @@ const Admin = () => {
             <TabsTrigger value="subscribers" className="font-body text-xs sm:text-sm gap-1">
               <Mail className="h-4 w-4" />
               <span className="hidden sm:inline">נרשמים</span>
+            </TabsTrigger>
+            <TabsTrigger value="questions" className="font-body text-xs sm:text-sm gap-1">
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">שאלות</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="font-body text-xs sm:text-sm gap-1">
               <Settings className="h-4 w-4" />
@@ -369,6 +374,10 @@ const Admin = () => {
 
           <TabsContent value="subscribers">
             <SubscribersList />
+          </TabsContent>
+
+          <TabsContent value="questions">
+            <QuestionManager />
           </TabsContent>
 
           <TabsContent value="settings">
