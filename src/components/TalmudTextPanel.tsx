@@ -24,7 +24,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
   }
 
   return (
-    <div className="mt-8 rounded-xl border border-border bg-card shadow-sm" dir="rtl">
+    <div className="rounded-xl border border-border bg-card shadow-sm lg:flex lg:flex-col lg:h-full" dir="rtl">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border bg-accent/5 rounded-t-xl">
         <div className="flex items-center gap-2">
