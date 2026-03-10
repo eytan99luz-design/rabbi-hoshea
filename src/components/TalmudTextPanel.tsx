@@ -104,7 +104,7 @@ export function TalmudTextPanel({ masechet, daf }: TalmudTextPanelProps) {
           </TabsList>
 
           <TabsContent value="amud-a">
-            <div className="p-4 space-y-3 max-h-[600px] overflow-y-auto">
+            <div className="p-4 space-y-3 max-h-[500px] lg:max-h-none lg:overflow-y-auto overflow-y-auto">
               {data?.amudA?.he.map((segment, i) => (
                 <p
                   key={i}
