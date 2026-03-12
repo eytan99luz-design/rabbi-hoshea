@@ -1,0 +1,3 @@
+
+ALTER TABLE public.videos ADD COLUMN IF NOT EXISTS title_en TEXT;
+ALTER TABLE public.videos ADD COLUMN IF NOT EXISTS summary_en TEXT;

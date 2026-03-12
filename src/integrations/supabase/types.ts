@@ -322,8 +322,10 @@ export type Database = {
           published_at: string | null
           summary: string | null
           summary_edited: boolean
+          summary_en: string | null
           thumbnail_url: string | null
           title: string
+          title_en: string | null
           updated_at: string
           youtube_id: string
         }
@@ -335,8 +337,10 @@ export type Database = {
           published_at?: string | null
           summary?: string | null
           summary_edited?: boolean
+          summary_en?: string | null
           thumbnail_url?: string | null
           title: string
+          title_en?: string | null
           updated_at?: string
           youtube_id: string
         }
@@ -348,8 +352,10 @@ export type Database = {
           published_at?: string | null
           summary?: string | null
           summary_edited?: boolean
+          summary_en?: string | null
           thumbnail_url?: string | null
           title?: string
+          title_en?: string | null
           updated_at?: string
           youtube_id?: string
         }
