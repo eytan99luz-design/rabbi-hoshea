@@ -1,7 +1,8 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { Search, Sparkles, Loader2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SearchBarProps {
   value: string;
@@ -11,19 +12,15 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChange, onAiSearch, isAiSearching, placeholder = "חפש שיעור..." }: SearchBarProps) {
+export function SearchBar({ value, onChange, onAiSearch, isAiSearching, placeholder }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t, dir } = useLanguage();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && value.trim() && onAiSearch) {
-      onAiSearch(value.trim());
-    }
+    if (e.key === "Enter" && value.trim() && onAiSearch) onAiSearch(value.trim());
   };
 
-  const handleClear = () => {
-    onChange("");
-    inputRef.current?.focus();
-  };
+  const handleClear = () => { onChange(""); inputRef.current?.focus(); };
 
   return (
     <div className="relative max-w-md w-full flex gap-2">
@@ -34,33 +31,20 @@ export function SearchBar({ value, onChange, onAiSearch, isAiSearching, placehol
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={placeholder || t("search.placeholder")}
           className="pl-10 pr-8 bg-card border-border font-body text-sm text-foreground"
-          dir="rtl"
+          dir={dir}
         />
         {value && (
-          <button
-            onClick={handleClear}
-            className="absolute left-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          >
+          <button onClick={handleClear} className="absolute left-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
             <X className="h-3.5 w-3.5" />
           </button>
         )}
       </div>
       {onAiSearch && (
-        <Button
-          onClick={() => value.trim() && onAiSearch(value.trim())}
-          disabled={!value.trim() || isAiSearching}
-          size="sm"
-          variant="outline"
-          className="shrink-0 gap-1.5 font-body bg-accent/10 border-accent/30 text-accent-foreground hover:bg-accent/20"
-        >
-          {isAiSearching ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Sparkles className="h-4 w-4" />
-          )}
-          <span className="hidden sm:inline">חיפוש חכם</span>
+        <Button onClick={() => value.trim() && onAiSearch(value.trim())} disabled={!value.trim() || isAiSearching} size="sm" variant="outline" className="shrink-0 gap-1.5 font-body bg-accent/10 border-accent/30 text-accent-foreground hover:bg-accent/20">
+          {isAiSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+          <span className="hidden sm:inline">{t("search.smart")}</span>
         </Button>
       )}
     </div>

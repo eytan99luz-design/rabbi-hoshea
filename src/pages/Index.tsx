@@ -10,6 +10,7 @@ import { DafYomiBanner } from "@/components/DafYomiBanner";
 import { useVideos, useMasechtot, useTotalVideoCount } from "@/hooks/useVideos";
 import { useAiSearch } from "@/hooks/useAiSearch";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getMasechetEnglish } from "@/lib/masechet-list";
 import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ const Index = () => {
   const { data: siteSettings } = useSiteSettings();
   const { data: totalCount } = useTotalVideoCount();
   const aiSearch = useAiSearch();
+  const { t, lang, dir } = useLanguage();
 
   const topMasechtot = masechtot
     ? Object.entries(masechtot)
@@ -58,7 +60,6 @@ const Index = () => {
   const totalMasechtot = masechtot ? Object.keys(masechtot).length : 0;
   const latestVideo = recentVideos?.[0];
 
-  // Determine which videos to show
   const showAiResults = aiSearch.data && aiSearch.data.results.length > 0;
   const displayVideos = showAiResults ? aiSearch.data!.results : recentVideos;
 
@@ -73,9 +74,11 @@ const Index = () => {
     }
   };
 
+  const latestTitle = latestVideo ? (lang === "en" && (latestVideo as any).title_en ? (latestVideo as any).title_en : latestVideo.title) : "";
+
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="בית המדרש הדיגיטלי" path="/" />
+      <SEOHead title={lang === "en" ? "Digital Beit Midrash" : "בית המדרש הדיגיטלי"} path="/" />
       <Header />
 
       {/* Hero */}
@@ -92,7 +95,7 @@ const Index = () => {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/20 text-accent mb-6"
           >
             <BookOpen className="h-4 w-4" />
-            <span className="text-sm font-body font-medium">{siteSettings?.hero_badge || "שיעורי גמרא יומיים"}</span>
+            <span className="text-sm font-body font-medium">{siteSettings?.hero_badge || t("hero.badge")}</span>
           </motion.div>
           <motion.h1
             initial="hidden"
@@ -100,9 +103,9 @@ const Index = () => {
             variants={fadeUp}
             custom={1}
             className="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight"
-            dir="rtl"
+            dir={dir}
           >
-            {siteSettings?.hero_title || "בית המדרש הדיגיטלי"}
+            {siteSettings?.hero_title || t("hero.title")}
           </motion.h1>
           <motion.p
             initial="hidden"
@@ -110,9 +113,9 @@ const Index = () => {
             variants={fadeUp}
             custom={2}
             className="text-lg text-primary-foreground/70 font-body max-w-xl mx-auto mb-8"
-            dir="rtl"
+            dir={dir}
           >
-            {siteSettings?.hero_subtitle || "שיעורי תורה מפי הרב הושע רבינוביץ׳ — לימוד גמרא מסודר לפי מסכת ודף"}
+            {siteSettings?.hero_subtitle || t("hero.subtitle")}
           </motion.p>
           <motion.div
             initial="hidden"
@@ -141,7 +144,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           className="container px-4 pt-6"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 border border-accent/20" dir="rtl">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 border border-accent/20" dir={dir}>
             <Sparkles className="h-4 w-4 text-accent shrink-0" />
             <span className="text-sm font-body text-foreground">{aiSearch.data.interpretation}</span>
           </div>
@@ -160,16 +163,16 @@ const Index = () => {
               className="grid grid-cols-3 gap-4 text-center"
             >
               {[
-                { icon: Play, value: totalVideos, label: "שיעורים" },
-                { icon: Library, value: totalMasechtot, label: "מסכתות" },
-                { icon: BarChart3, value: topMasechtot[0]?.[1] || 0, label: `שיעורים ב${topMasechtot[0]?.[0] || "—"}` },
+                { icon: Play, value: totalVideos, label: t("stats.lessons") },
+                { icon: Library, value: totalMasechtot, label: t("stats.masechtot") },
+                { icon: BarChart3, value: topMasechtot[0]?.[1] || 0, label: `${t("stats.lessonsIn")}${topMasechtot[0]?.[0] || "—"}` },
               ].map((stat, i) => (
                 <motion.div key={i} variants={scaleIn} custom={i} className="flex flex-col items-center gap-1">
                   <div className="flex items-center gap-2 text-accent">
                     <stat.icon className="h-5 w-5" />
                     <span className="font-display text-2xl font-bold text-foreground">{stat.value}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground font-body" dir="rtl">{stat.label}</span>
+                  <span className="text-xs text-muted-foreground font-body" dir={dir}>{stat.label}</span>
                 </motion.div>
               ))}
             </motion.div>
@@ -187,7 +190,7 @@ const Index = () => {
           custom={0}
           className="container px-4 py-10"
         >
-          <h2 className="font-display text-xl font-bold text-foreground mb-5" dir="rtl">השיעור האחרון</h2>
+          <h2 className="font-display text-xl font-bold text-foreground mb-5" dir={dir}>{t("index.latestLesson")}</h2>
           <Link
             to={`/lesson/${latestVideo.youtube_id}`}
             className="group block rounded-xl overflow-hidden border border-border bg-card hover:shadow-xl transition-all duration-300"
@@ -196,7 +199,7 @@ const Index = () => {
               <div className="aspect-video relative overflow-hidden">
                 <img
                   src={latestVideo.thumbnail_url || `https://img.youtube.com/vi/${latestVideo.youtube_id}/maxresdefault.jpg`}
-                  alt={latestVideo.title}
+                  alt={latestTitle}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
@@ -206,22 +209,22 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6 md:p-8 flex flex-col justify-center" dir="rtl">
+              <div className="p-6 md:p-8 flex flex-col justify-center" dir={dir}>
                 <span className="inline-block text-xs font-body font-semibold text-accent bg-accent/10 px-3 py-1 rounded-full w-fit mb-3">
-                  חדש
+                  {t("index.new")}
                 </span>
                 <h3 className="font-display text-lg md:text-xl font-bold text-foreground leading-relaxed mb-2">
-                  {latestVideo.title}
+                  {latestTitle}
                 </h3>
                 {latestVideo.masechet && (
                   <p className="text-sm text-muted-foreground font-body">
-                    {getMasechetEnglish(latestVideo.masechet)} • מסכת {latestVideo.masechet}
-                    {latestVideo.daf && ` • דף ${latestVideo.daf}`}
+                    {getMasechetEnglish(latestVideo.masechet)} • {lang === "en" ? latestVideo.masechet : `מסכת ${latestVideo.masechet}`}
+                    {latestVideo.daf && ` • ${lang === "en" ? `Page ${latestVideo.daf}` : `דף ${latestVideo.daf}`}`}
                   </p>
                 )}
                 {latestVideo.published_at && (
                   <p className="text-xs text-muted-foreground font-body mt-2">
-                    {new Date(latestVideo.published_at).toLocaleDateString("he-IL")}
+                    {new Date(latestVideo.published_at).toLocaleDateString(lang === "en" ? "en-US" : "he-IL")}
                   </p>
                 )}
               </div>
@@ -240,10 +243,10 @@ const Index = () => {
             variants={fadeUp}
             className="flex items-center justify-between mb-6"
           >
-            <h2 className="font-display text-xl font-bold text-foreground" dir="rtl">מסכתות פופולריות</h2>
+            <h2 className="font-display text-xl font-bold text-foreground" dir={dir}>{t("index.popularMasechtot")}</h2>
             <Link to="/browse">
               <Button variant="ghost" size="sm" className="text-muted-foreground font-body">
-                לכל המסכתות
+                {t("index.allMasechtot")}
                 <ArrowLeft className="h-4 w-4 ml-1" />
               </Button>
             </Link>
@@ -261,11 +264,11 @@ const Index = () => {
                   to={`/masechet/${encodeURIComponent(masechet)}`}
                   className="group block border border-border rounded-lg p-4 bg-card hover:border-accent hover:shadow-md transition-all text-center"
                 >
-                  <h3 className="font-display text-lg font-bold text-foreground group-hover:text-accent transition-colors" dir="rtl">
+                  <h3 className="font-display text-lg font-bold text-foreground group-hover:text-accent transition-colors" dir={dir}>
                     {masechet}
                   </h3>
                   <p className="text-xs text-muted-foreground font-body mt-1">
-                    {getMasechetEnglish(masechet)} • {count} שיעורים
+                    {getMasechetEnglish(masechet)} • {count} {t("stats.lessons")}
                   </p>
                 </Link>
               </motion.div>
@@ -282,14 +285,14 @@ const Index = () => {
           viewport={{ once: true }}
           variants={fadeUp}
           className="font-display text-xl font-bold text-foreground mb-6"
-          dir="rtl"
+          dir={dir}
         >
           {showAiResults ? (
             <span className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-accent" />
-              תוצאות חיפוש חכם ({aiSearch.data!.results.length})
+              {t("index.smartSearchResults")} ({aiSearch.data!.results.length})
             </span>
-          ) : search ? "תוצאות חיפוש" : "שיעורים אחרונים"}
+          ) : search ? t("index.searchResults") : t("index.recentLessons")}
         </motion.h2>
         {isLoading || aiSearch.isSearching ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -320,8 +323,8 @@ const Index = () => {
         ) : (
           <div className="text-center py-16">
             <SearchIcon className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground font-body" dir="rtl">
-              {search || showAiResults ? "לא נמצאו שיעורים. נסה חיפוש אחר." : "אין שיעורים עדיין. סנכרן את הערוץ כדי להתחיל."}
+            <p className="text-muted-foreground font-body" dir={dir}>
+              {search || showAiResults ? t("index.noLessonsSearch") : t("index.noLessonsYet")}
             </p>
           </div>
         )}
@@ -336,8 +339,8 @@ const Index = () => {
           variants={fadeUp}
           className="container px-4 py-10"
         >
-          <h2 className="font-display text-xl font-bold text-foreground mb-6 flex items-center gap-2" dir="rtl">
-            📅 לוח שיעורים
+          <h2 className="font-display text-xl font-bold text-foreground mb-6 flex items-center gap-2" dir={dir}>
+            {t("index.lessonsCalendar")}
           </h2>
           <LessonCalendar />
         </motion.section>
@@ -361,7 +364,7 @@ const Index = () => {
       <footer className="border-t border-border bg-card py-8">
         <div className="container px-4 text-center">
           <p className="text-sm text-muted-foreground font-body">
-            © {new Date().getFullYear()} {siteSettings?.footer_text || "שיעורי הרב הושע רבינוביץ׳"}
+            © {new Date().getFullYear()} {siteSettings?.footer_text || t("footer.default")}
           </p>
         </div>
       </footer>
