@@ -180,7 +180,7 @@ export function LessonCalendar() {
                           selected ? "text-primary-foreground" : "text-accent"
                         }`}
                       >
-                        {v.masechet ? `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}` : ""}
+                        {v.masechet ? (lang === "en" ? `${getMasechetEnglish(v.masechet)}${v.daf ? ` ${v.daf}` : ""}` : `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}`) : ""}
                       </span>
                     ))}
                     {count > 1 && (
