@@ -137,7 +137,7 @@ export function LessonCalendar() {
 
         {/* Day headers */}
         <div className="grid grid-cols-7 gap-1 mb-1">
-          {HEBREW_DAYS.map((day) => (
+        {days.map((day) => (
             <div
               key={day}
               className="text-center text-xs font-body text-muted-foreground py-1"
