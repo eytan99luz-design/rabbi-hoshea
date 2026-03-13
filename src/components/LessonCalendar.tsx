@@ -197,9 +197,9 @@ export function LessonCalendar() {
 
         {/* Selected day lessons */}
         {selectedDay && selectedVideos.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-border space-y-2" dir="rtl">
+          <div className="mt-4 pt-4 border-t border-border space-y-2" dir={dir}>
             <p className="text-sm font-body font-semibold text-foreground">
-              {selectedDay} {HEBREW_MONTHS[month]} — {selectedVideos.length} שיעורים
+              {lang === "en" ? `${months[month]} ${selectedDay}` : `${selectedDay} ${months[month]}`} — {selectedVideos.length} {lang === "en" ? "lessons" : "שיעורים"}
             </p>
             {selectedVideos.map((video) => (
               <Link
