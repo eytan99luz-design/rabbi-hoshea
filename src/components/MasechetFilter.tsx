@@ -13,7 +13,8 @@ interface MasechetFilterProps {
 
 export function MasechetFilter({ masechtot, selected, onSelect }: MasechetFilterProps) {
   const sorted = Object.entries(masechtot).sort((a, b) => a[0].localeCompare(b[0], 'he'));
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
+  const masechetLabel = (heb: string) => lang === "en" ? getMasechetEnglish(heb) : heb;
 
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden">
