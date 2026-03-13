@@ -40,7 +40,10 @@ interface CalendarVideo {
 }
 
 export function LessonCalendar() {
+  const { lang, dir } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const months = lang === "en" ? ENGLISH_MONTHS : HEBREW_MONTHS;
+  const days = lang === "en" ? ENGLISH_DAYS : HEBREW_DAYS;
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
