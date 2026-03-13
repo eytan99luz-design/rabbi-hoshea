@@ -265,10 +265,10 @@ const Index = () => {
                   className="group block border border-border rounded-lg p-4 bg-card hover:border-accent hover:shadow-md transition-all text-center"
                 >
                   <h3 className="font-display text-lg font-bold text-foreground group-hover:text-accent transition-colors" dir={dir}>
-                    {masechet}
+                    {lang === "en" ? getMasechetEnglish(masechet) : masechet}
                   </h3>
                   <p className="text-xs text-muted-foreground font-body mt-1">
-                    {getMasechetEnglish(masechet)} • {count} {t("stats.lessons")}
+                    {lang === "en" ? masechet : getMasechetEnglish(masechet)} • {count} {t("stats.lessons")}
                   </p>
                 </Link>
               </motion.div>

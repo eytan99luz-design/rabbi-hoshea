@@ -236,8 +236,8 @@ export function LessonCalendar() {
 
         {selectedDay && selectedVideos.length === 0 && (
           <div className="mt-4 pt-4 border-t border-border text-center">
-            <p className="text-sm text-muted-foreground font-body" dir="rtl">
-              אין שיעורים ביום זה
+            <p className="text-sm text-muted-foreground font-body" dir={dir}>
+              {lang === "en" ? "No lessons on this day" : "אין שיעורים ביום זה"}
             </p>
           </div>
         )}
