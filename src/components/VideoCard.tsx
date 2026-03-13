@@ -43,7 +43,9 @@ export function VideoCard({ video }: VideoCardProps) {
         )}
         {video.masechet && (
           <p className="mt-2 text-xs text-muted-foreground font-body">
-            {getMasechetEnglish(video.masechet)} • {lang === "en" ? video.masechet : `מסכת ${video.masechet}`}
+            {lang === "en" ? getMasechetEnglish(video.masechet) : `מסכת ${video.masechet}`}
+            {lang === "en" && ` • ${video.masechet}`}
+            {lang === "he" && ` • ${getMasechetEnglish(video.masechet)}`}
           </p>
         )}
       </div>

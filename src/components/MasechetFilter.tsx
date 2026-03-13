@@ -13,7 +13,8 @@ interface MasechetFilterProps {
 
 export function MasechetFilter({ masechtot, selected, onSelect }: MasechetFilterProps) {
   const sorted = Object.entries(masechtot).sort((a, b) => a[0].localeCompare(b[0], 'he'));
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
+  const masechetLabel = (heb: string) => lang === "en" ? getMasechetEnglish(heb) : heb;
 
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden">
@@ -30,7 +31,7 @@ export function MasechetFilter({ masechtot, selected, onSelect }: MasechetFilter
           {sorted.map(([masechet, count]) => (
             <div key={masechet} className="flex items-center gap-1">
               <button onClick={() => onSelect(masechet)} className={cn("flex-1 text-right px-3 py-2 rounded-md text-sm font-body transition-colors flex items-center justify-between", selected === masechet ? "bg-primary text-primary-foreground" : "hover:bg-muted text-foreground")} dir={dir}>
-                <span>{masechet}</span>
+                <span>{masechetLabel(masechet)}</span>
                 <span className={cn("text-xs", selected === masechet ? "text-primary-foreground/70" : "text-muted-foreground")}>{count}</span>
               </button>
               <Link to={`/masechet/${encodeURIComponent(masechet)}`} className="p-1.5 rounded-md text-muted-foreground hover:text-accent hover:bg-muted transition-colors" title={`${t("common.masechet")} ${masechet}`}>

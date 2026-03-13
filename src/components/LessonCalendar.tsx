@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Calendar, Play } from "lucide-react";
-import { numberToHebrewDaf } from "@/lib/masechet-list";
+import { numberToHebrewDaf, getMasechetEnglish } from "@/lib/masechet-list";
 import { getHebrewDay, getHebrewMonthsForGregorian } from "@/lib/hebrew-date";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Select,
   SelectContent,
@@ -20,7 +21,13 @@ const HEBREW_MONTHS = [
   "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
 ];
 
+const ENGLISH_MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 const HEBREW_DAYS = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
+const ENGLISH_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 interface CalendarVideo {
   id: string;
@@ -33,7 +40,10 @@ interface CalendarVideo {
 }
 
 export function LessonCalendar() {
+  const { lang, dir } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const months = lang === "en" ? ENGLISH_MONTHS : HEBREW_MONTHS;
+  const days = lang === "en" ? ENGLISH_DAYS : HEBREW_DAYS;
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -102,7 +112,7 @@ export function LessonCalendar() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {HEBREW_MONTHS.map((m, i) => (
+                {months.map((m, i) => (
                     <SelectItem key={i} value={String(i)}>{m}</SelectItem>
                   ))}
                 </SelectContent>
@@ -127,7 +137,7 @@ export function LessonCalendar() {
 
         {/* Day headers */}
         <div className="grid grid-cols-7 gap-1 mb-1">
-          {HEBREW_DAYS.map((day) => (
+        {days.map((day) => (
             <div
               key={day}
               className="text-center text-xs font-body text-muted-foreground py-1"
@@ -170,7 +180,7 @@ export function LessonCalendar() {
                           selected ? "text-primary-foreground" : "text-accent"
                         }`}
                       >
-                        {v.masechet ? `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}` : ""}
+                        {v.masechet ? (lang === "en" ? `${getMasechetEnglish(v.masechet)}${v.daf ? ` ${v.daf}` : ""}` : `${v.masechet}${v.daf ? ` ${numberToHebrewDaf(v.daf)}` : ""}`) : ""}
                       </span>
                     ))}
                     {count > 1 && (
@@ -187,9 +197,9 @@ export function LessonCalendar() {
 
         {/* Selected day lessons */}
         {selectedDay && selectedVideos.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-border space-y-2" dir="rtl">
+          <div className="mt-4 pt-4 border-t border-border space-y-2" dir={dir}>
             <p className="text-sm font-body font-semibold text-foreground">
-              {selectedDay} {HEBREW_MONTHS[month]} — {selectedVideos.length} שיעורים
+              {lang === "en" ? `${months[month]} ${selectedDay}` : `${selectedDay} ${months[month]}`} — {selectedVideos.length} {lang === "en" ? "lessons" : "שיעורים"}
             </p>
             {selectedVideos.map((video) => (
               <Link
@@ -214,8 +224,8 @@ export function LessonCalendar() {
                   <p className="font-body text-sm text-foreground line-clamp-1">{video.title}</p>
                   {video.masechet && (
                     <p className="text-xs text-muted-foreground font-body">
-                      {video.masechet}
-                      {video.daf ? ` דף ${numberToHebrewDaf(video.daf)}` : ""}
+                      {lang === "en" ? getMasechetEnglish(video.masechet) : video.masechet}
+                      {video.daf ? (lang === "en" ? ` Page ${video.daf}` : ` דף ${numberToHebrewDaf(video.daf)}`) : ""}
                     </p>
                   )}
                 </div>
@@ -226,8 +236,8 @@ export function LessonCalendar() {
 
         {selectedDay && selectedVideos.length === 0 && (
           <div className="mt-4 pt-4 border-t border-border text-center">
-            <p className="text-sm text-muted-foreground font-body" dir="rtl">
-              אין שיעורים ביום זה
+            <p className="text-sm text-muted-foreground font-body" dir={dir}>
+              {lang === "en" ? "No lessons on this day" : "אין שיעורים ביום זה"}
             </p>
           </div>
         )}
