@@ -97,7 +97,7 @@ const Browse = () => {
               <>
                 <span className="text-sm text-muted-foreground font-body">{t("browse.masechet")}</span>
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-primary-foreground text-sm font-body">
-                  {selectedMasechet}
+                  {lang === "en" ? getMasechetEnglish(selectedMasechet) : selectedMasechet}
                   <button onClick={() => { setSelectedMasechet(null); setSelectedDaf(null); }}><X className="h-3 w-3" /></button>
                 </span>
               </>
