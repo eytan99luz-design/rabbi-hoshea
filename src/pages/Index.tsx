@@ -165,7 +165,7 @@ const Index = () => {
               {[
                 { icon: Play, value: totalVideos, label: t("stats.lessons") },
                 { icon: Library, value: totalMasechtot, label: t("stats.masechtot") },
-                { icon: BarChart3, value: topMasechtot[0]?.[1] || 0, label: `${t("stats.lessonsIn")}${topMasechtot[0]?.[0] || "—"}` },
+                { icon: BarChart3, value: topMasechtot[0]?.[1] || 0, label: `${t("stats.lessonsIn")}${topMasechtot[0]?.[0] ? (lang === "en" ? getMasechetEnglish(topMasechtot[0][0]) : topMasechtot[0][0]) : "—"}` },
               ].map((stat, i) => (
                 <motion.div key={i} variants={scaleIn} custom={i} className="flex flex-col items-center gap-1">
                   <div className="flex items-center gap-2 text-accent">
