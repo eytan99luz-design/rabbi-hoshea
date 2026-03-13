@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft, Calendar, Play } from "lucide-react";
-import { numberToHebrewDaf } from "@/lib/masechet-list";
+import { numberToHebrewDaf, getMasechetEnglish } from "@/lib/masechet-list";
 import { getHebrewDay, getHebrewMonthsForGregorian } from "@/lib/hebrew-date";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Select,
   SelectContent,
