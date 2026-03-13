@@ -112,7 +112,7 @@ export function LessonCalendar() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {HEBREW_MONTHS.map((m, i) => (
+                {months.map((m, i) => (
                     <SelectItem key={i} value={String(i)}>{m}</SelectItem>
                   ))}
                 </SelectContent>
