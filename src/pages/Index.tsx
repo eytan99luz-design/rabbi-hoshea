@@ -218,8 +218,13 @@ const Index = () => {
                 </h3>
                 {latestVideo.masechet && (
                   <p className="text-sm text-muted-foreground font-body">
-                    {getMasechetEnglish(latestVideo.masechet)} • {lang === "en" ? latestVideo.masechet : `מסכת ${latestVideo.masechet}`}
-                    {latestVideo.daf && ` • ${lang === "en" ? `Page ${latestVideo.daf}` : `דף ${latestVideo.daf}`}`}
+                    {lang === "en" ? getMasechetEnglish(latestVideo.masechet) : `מסכת ${latestVideo.masechet}`}
+                    {latestVideo.daf && ` • ${lang === "en" ? `Page ${latestVideo.daf}` : `דף ${numberToHebrewDaf(latestVideo.daf)}`}`}
+                  </p>
+                )}
+                {latestVideo.summary && (
+                  <p className="text-sm text-muted-foreground font-body mt-2 line-clamp-2">
+                    {lang === "en" && (latestVideo as any).summary_en ? (latestVideo as any).summary_en : latestVideo.summary}
                   </p>
                 )}
                 {latestVideo.published_at && (
