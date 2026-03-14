@@ -11,7 +11,7 @@ import { useVideos, useMasechtot, useTotalVideoCount } from "@/hooks/useVideos";
 import { useAiSearch } from "@/hooks/useAiSearch";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getMasechetEnglish } from "@/lib/masechet-list";
+import { getMasechetEnglish, numberToHebrewDaf } from "@/lib/masechet-list";
 import { ArrowLeft, BookOpen, Search as SearchIcon, Play, BarChart3, Library, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
