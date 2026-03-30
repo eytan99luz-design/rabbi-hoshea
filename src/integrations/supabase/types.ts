@@ -269,6 +269,33 @@ export type Database = {
         }
         Relationships: []
       }
+      sync_logs: {
+        Row: {
+          error_message: string | null
+          id: string
+          new_videos: number
+          ran_at: string
+          status: string
+          total_processed: number
+        }
+        Insert: {
+          error_message?: string | null
+          id?: string
+          new_videos?: number
+          ran_at?: string
+          status?: string
+          total_processed?: number
+        }
+        Update: {
+          error_message?: string | null
+          id?: string
+          new_videos?: number
+          ran_at?: string
+          status?: string
+          total_processed?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
