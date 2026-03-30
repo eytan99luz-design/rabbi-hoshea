@@ -134,11 +134,27 @@ Deno.serve(async (req) => {
       pageToken = data.nextPageToken;
     } while (pageToken);
 
+    // Log the sync result
+    await supabase.from("sync_logs").insert({
+      new_videos: totalInserted,
+      total_processed: totalInserted,
+      status: "success",
+    });
+
     return new Response(
       JSON.stringify({ success: true, newVideos: totalInserted }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    // Log the error
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const sb = createClient(supabaseUrl, supabaseKey);
+    await sb.from("sync_logs").insert({
+      status: "error",
+      error_message: error.message,
+    });
+
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
