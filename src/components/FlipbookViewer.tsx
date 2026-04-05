@@ -112,7 +112,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
                 mobileScrollSupport={true}
                 onFlip={onFlip}
                 className="shadow-2xl"
-                style={{}}
+                style={{ direction: "rtl" }}
                 startPage={0}
                 drawShadow={true}
                 flippingTime={600}
@@ -128,7 +128,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
                 {Array.from({ length: numPages }, (_, i) => (
                   <BookPage
                     key={i}
-                    pageNumber={i + 1}
+                    pageNumber={numPages - i}
                     width={containerSize.width}
                     height={containerSize.height}
                   />
@@ -141,19 +141,19 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => flipBookRef.current?.pageFlip()?.flipNext()}
-                disabled={currentPage >= numPages - 1}
+                onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()}
+                disabled={currentPage <= 0}
               >
                 <ChevronRight className="h-5 w-5" />
               </Button>
               <span className="text-sm font-body text-muted-foreground min-w-[80px] text-center" dir="rtl">
-                {currentPage + 1} / {numPages}
+                {numPages - currentPage} / {numPages}
               </span>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()}
-                disabled={currentPage <= 0}
+                onClick={() => flipBookRef.current?.pageFlip()?.flipNext()}
+                disabled={currentPage >= numPages - 1}
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
