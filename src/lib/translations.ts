@@ -170,6 +170,8 @@ export const translations = {
   "articles.noArticles": { he: "אין מאמרים עדיין", en: "No articles yet" },
   "articles.read": { he: "קריאה", en: "Read" },
   "articles.download": { he: "הורדה", en: "Download" },
+  "articles.askQuestion": { he: "שאל שאלה על המאמר", en: "Ask a Question About This Article" },
+  "articles.yourQuestions": { he: "השאלות שלך על מאמר זה:", en: "Your questions on this article:" },
 
   // Calendar
   "calendar.title": { he: "לוח שיעורים", en: "Lesson Calendar" },
