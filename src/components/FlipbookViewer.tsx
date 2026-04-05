@@ -112,7 +112,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
                 mobileScrollSupport={true}
                 onFlip={onFlip}
                 className="shadow-2xl"
-                style={{}}
+                style={{ direction: "rtl" }}
                 startPage={0}
                 drawShadow={true}
                 flippingTime={600}
