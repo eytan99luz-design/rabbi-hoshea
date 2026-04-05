@@ -7,11 +7,11 @@ import { FileText, Download, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FlipbookViewer } from "@/components/FlipbookViewer";
+import { ArticleQuestionForm } from "@/components/ArticleQuestionForm";
 
 const Articles = () => {
   const { data: articles, isLoading } = useArticles();
-  const [viewingUrl, setViewingUrl] = useState<string | null>(null);
-  const [viewingTitle, setViewingTitle] = useState("");
+  const [viewingArticle, setViewingArticle] = useState<{ url: string; title: string; id: string } | null>(null);
   const { t, dir, lang } = useLanguage();
 
   return (
@@ -50,7 +50,7 @@ const Articles = () => {
                 </div>
                 <div className="flex gap-2 mt-auto">
                   {article.file_type === "pdf" && (
-                    <Button variant="outline" size="sm" className="font-body" onClick={() => { setViewingUrl(article.file_url); setViewingTitle(article.title); }}>
+                    <Button variant="outline" size="sm" className="font-body" onClick={() => setViewingArticle({ url: article.file_url, title: article.title, id: article.id })}>
                       <BookOpen className="h-4 w-4 ml-1" />
                       {t("articles.read")}
                     </Button>
@@ -73,13 +73,18 @@ const Articles = () => {
         )}
       </div>
 
-      <Dialog open={!!viewingUrl} onOpenChange={() => setViewingUrl(null)}>
-        <DialogContent className="max-w-5xl h-[90vh] flex flex-col p-4 sm:p-6">
+      <Dialog open={!!viewingArticle} onOpenChange={() => setViewingArticle(null)}>
+        <DialogContent className="max-w-6xl h-[90vh] flex flex-col p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="font-display" dir={dir}>{viewingTitle}</DialogTitle>
+            <DialogTitle className="font-display" dir={dir}>{viewingArticle?.title}</DialogTitle>
           </DialogHeader>
-          <div className="flex-1 min-h-0">
-            {viewingUrl && <FlipbookViewer pdfUrl={viewingUrl} title={viewingTitle} />}
+          <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 min-h-0">
+              {viewingArticle && <FlipbookViewer pdfUrl={viewingArticle.url} title={viewingArticle.title} articleId={viewingArticle.id} />}
+            </div>
+            <div className="lg:w-80 shrink-0 overflow-y-auto">
+              {viewingArticle && <ArticleQuestionForm articleId={viewingArticle.id} />}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
