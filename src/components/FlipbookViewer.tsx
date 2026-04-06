@@ -57,9 +57,10 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
   );
 
   const updateSize = useCallback(() => {
-    const container = fullscreenRef.current || containerRef.current;
+    const container = isFullscreen ? fullscreenRef.current : containerRef.current;
     if (container) {
       const rect = container.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
       const controlsHeight = user && articleId && bookmarks && bookmarks.length > 0 ? 132 : 96;
       const horizontalPadding = isFullscreen ? 48 : 24;
       const maxH = Math.max(rect.height - controlsHeight, 220);
@@ -78,8 +79,18 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
 
   useEffect(() => {
     updateSize();
+    // Use ResizeObserver for reliable size updates (e.g. dialog open animation)
+    const container = isFullscreen ? fullscreenRef.current : containerRef.current;
+    let resizeObserver: ResizeObserver | null = null;
+    if (container) {
+      resizeObserver = new ResizeObserver(() => updateSize());
+      resizeObserver.observe(container);
+    }
     window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
+    return () => {
+      window.removeEventListener("resize", updateSize);
+      resizeObserver?.disconnect();
+    };
   }, [updateSize, isFullscreen]);
 
   useEffect(() => {
