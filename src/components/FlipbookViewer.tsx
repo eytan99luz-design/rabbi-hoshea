@@ -84,8 +84,9 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
+  const onDocumentLoadSuccess = ({ numPages: n }: { numPages: number }) => {
+    setNumPages(n);
+    setCurrentPage(n - 1);
     updateSize();
   };
 
