@@ -51,7 +51,6 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
   const currentRealPage = numPages > 0 ? numPages - currentPage : 1;
   const isBookmarked = bookmarks?.some(b => b.page_number === currentRealPage);
   const shouldUsePortrait = containerSize.width < 360;
-  const pageDisplayCount = shouldUsePortrait ? 1 : 2;
   const sortedBookmarks = useMemo(
     () => [...(bookmarks ?? [])].sort((a, b) => a.page_number - b.page_number),
     [bookmarks]
@@ -74,7 +73,6 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
         pageW = pageH / pageRatio;
       }
       setContainerSize({ width: Math.floor(pageW), height: Math.floor(pageH) });
-    }
     }
   }, [articleId, bookmarks, isFullscreen, user]);
 
