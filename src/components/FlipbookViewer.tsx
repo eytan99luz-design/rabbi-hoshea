@@ -163,7 +163,7 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
                     onFlip={onFlip}
                     className="shadow-2xl"
                     style={{ direction: "rtl" }}
-                    startPage={0}
+                    startPage={numPages - 1}
                     drawShadow={true}
                     flippingTime={600}
                     usePortrait={containerSize.width < 300}
