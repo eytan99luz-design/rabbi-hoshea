@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, forwardRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useCallback, useMemo } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import HTMLFlipBook from "react-pageflip";
 import { Button } from "@/components/ui/button";
@@ -50,15 +50,24 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
 
   const currentRealPage = numPages > 0 ? numPages - currentPage : 1;
   const isBookmarked = bookmarks?.some(b => b.page_number === currentRealPage);
+  const shouldUsePortrait = containerSize.width < 360;
+  const pageDisplayCount = shouldUsePortrait ? 1 : 2;
+  const sortedBookmarks = useMemo(
+    () => [...(bookmarks ?? [])].sort((a, b) => a.page_number - b.page_number),
+    [bookmarks]
+  );
 
   const updateSize = useCallback(() => {
     const container = fullscreenRef.current || containerRef.current;
     if (container) {
       const rect = container.getBoundingClientRect();
-      const maxH = rect.height - 70;
-      const maxW = rect.width;
+      const controlsHeight = user && articleId && bookmarks && bookmarks.length > 0 ? 132 : 96;
+      const horizontalPadding = isFullscreen ? 48 : 24;
+      const maxH = Math.max(rect.height - controlsHeight, 220);
+      const maxW = Math.max(rect.width - horizontalPadding, 220);
       const pageRatio = 1.414;
-      let pageW = Math.min(maxW / 2, 400);
+      const displayCount = maxW < 720 ? 1 : 2;
+      let pageW = maxW / displayCount;
       let pageH = pageW * pageRatio;
       if (pageH > maxH) {
         pageH = maxH;
@@ -66,7 +75,8 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
       }
       setContainerSize({ width: Math.floor(pageW), height: Math.floor(pageH) });
     }
-  }, []);
+    }
+  }, [articleId, bookmarks, isFullscreen, user]);
 
   useEffect(() => {
     updateSize();
@@ -146,8 +156,14 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
         >
           {numPages > 0 && containerSize.width > 0 && (
             <>
-              <div className="flex-1 flex items-center justify-center overflow-auto" dir="rtl">
-                <div style={{ transform: `scale(${zoom})`, transformOrigin: 'center center', transition: 'transform 0.2s ease' }}>
+              <div className="flex-1 flex items-center justify-center overflow-auto px-2 py-4" dir="rtl">
+                <div
+                  style={{
+                    transform: `scale(${zoom})`,
+                    transformOrigin: 'center center',
+                    transition: 'transform 0.2s ease'
+                  }}
+                >
                   {/* @ts-ignore - react-pageflip types */}
                   <HTMLFlipBook
                     ref={flipBookRef}
@@ -155,9 +171,9 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
                     height={containerSize.height}
                     size="fixed"
                     minWidth={200}
-                    maxWidth={600}
+                    maxWidth={isFullscreen ? 1400 : 900}
                     minHeight={280}
-                    maxHeight={850}
+                    maxHeight={isFullscreen ? 2000 : 1200}
                     maxShadowOpacity={0.5}
                     showCover={true}
                     mobileScrollSupport={true}
@@ -167,7 +183,7 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
                     startPage={numPages - 1}
                     drawShadow={true}
                     flippingTime={600}
-                    usePortrait={containerSize.width < 300}
+                    usePortrait={shouldUsePortrait}
                     startZIndex={0}
                     autoSize={false}
                     clickEventForward={true}
@@ -249,10 +265,10 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
               </TooltipProvider>
 
               {/* Bookmarks bar */}
-              {user && articleId && bookmarks && bookmarks.length > 0 && (
+              {user && articleId && sortedBookmarks.length > 0 && (
                 <div className="flex items-center gap-1.5 pb-2 flex-wrap justify-center">
                   <span className="text-xs text-muted-foreground font-body">סימניות:</span>
-                  {bookmarks.sort((a, b) => a.page_number - b.page_number).map(bm => (
+                  {sortedBookmarks.map(bm => (
                     <Button
                       key={bm.id}
                       variant={bm.page_number === currentRealPage ? "default" : "outline"}
