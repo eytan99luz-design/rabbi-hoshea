@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useRef, forwardRef, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import HTMLFlipBook from "react-pageflip";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronLeft, ZoomIn, ZoomOut, Maximize2, Minimize2, Bookmark, BookmarkCheck } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { useArticleBookmarks } from "@/hooks/useArticleBookmarks";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { ChevronRight, ChevronLeft, Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
@@ -17,66 +14,42 @@ interface FlipbookViewerProps {
   articleId?: string;
 }
 
-const BookPage = forwardRef<HTMLDivElement, { pageNumber: number; width: number; height: number }>(
-  ({ pageNumber, width, height }, ref) => {
-    return (
-      <div ref={ref} className="bg-background flex items-center justify-center overflow-hidden" style={{ width, height }}>
-        <Page
-          pageNumber={pageNumber}
-          width={width}
-          renderTextLayer={false}
-          renderAnnotationLayer={false}
-          className="flex items-center justify-center"
-        />
-      </div>
-    );
-  }
-);
-BookPage.displayName = "BookPage";
-
 export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps) {
   const [numPages, setNumPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [zoom, setZoom] = useState(1);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
-  const [pageAspectRatio, setPageAspectRatio] = useState(1.414);
+  const [pageRatio, setPageRatio] = useState(0.72);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const contentAreaRef = useRef<HTMLDivElement>(null);
-  const fullscreenRef = useRef<HTMLDivElement>(null);
-  const flipBookRef = useRef<any>(null);
+  const { dir, lang } = useLanguage();
 
-  const { user } = useAuth();
-  const { bookmarks, addBookmark, removeBookmark } = useArticleBookmarks(articleId);
+  const labels = lang === "he"
+    ? {
+        loading: "טוען מסמך...",
+        failed: "לא הצלחנו לפתוח את המאמר.",
+        previous: "העמוד הקודם",
+        next: "העמוד הבא",
+        page: "עמוד",
+      }
+    : {
+        loading: "Loading document...",
+        failed: "We couldn't open this article.",
+        previous: "Previous page",
+        next: "Next page",
+        page: "Page",
+      };
 
-  const currentRealPage = numPages > 0 ? numPages - currentPage : 1;
-  const isBookmarked = bookmarks?.some(b => b.page_number === currentRealPage);
-  const shouldUsePortrait = viewportSize.width < 700;
-  const sortedBookmarks = useMemo(
-    () => [...(bookmarks ?? [])].sort((a, b) => a.page_number - b.page_number),
-    [bookmarks]
-  );
-  const pageDisplayCount = shouldUsePortrait ? 1 : 2;
-  const containerSize = useMemo(() => {
+  const pageWidth = useMemo(() => {
     if (viewportSize.width === 0 || viewportSize.height === 0) {
-      return { width: 0, height: 0 };
+      return 0;
     }
 
-    const availableWidth = Math.max(viewportSize.width - 16, 220);
-    const availableHeight = Math.max(viewportSize.height - 16, 220);
+    const availableWidth = Math.max(viewportSize.width - 24, 180);
+    const availableHeight = Math.max(viewportSize.height - 24, 180);
+    const widthFromHeight = availableHeight * pageRatio;
 
-    let pageWidth = availableWidth / pageDisplayCount;
-    let pageHeight = pageWidth * pageAspectRatio;
-
-    if (pageHeight > availableHeight) {
-      pageHeight = availableHeight;
-      pageWidth = pageHeight / pageAspectRatio;
-    }
-
-    return {
-      width: Math.max(Math.floor(pageWidth), 220),
-      height: Math.max(Math.floor(pageHeight), 220),
-    };
-  }, [pageAspectRatio, pageDisplayCount, viewportSize.height, viewportSize.width]);
+    return Math.max(180, Math.floor(Math.min(availableWidth, widthFromHeight)));
+  }, [pageRatio, viewportSize.height, viewportSize.width]);
 
   useEffect(() => {
     const contentArea = contentAreaRef.current;
@@ -108,206 +81,93 @@ export function FlipbookViewer({ pdfUrl, title, articleId }: FlipbookViewerProps
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isFullscreen, numPages]);
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        setIsFullscreen(false);
-      }
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  const onDocumentLoadSuccess = async ({ numPages: n, getPage }: { numPages: number; getPage: (pageNumber: number) => Promise<any> }) => {
-    const firstPage = await getPage(1);
-    const viewport = firstPage.getViewport({ scale: 1 });
+  useEffect(() => {
+    setNumPages(0);
+    setCurrentPage(1);
+    setLoadError(null);
+    setPageRatio(0.72);
+  }, [articleId, pdfUrl]);
 
-    setPageAspectRatio(viewport.height / viewport.width);
-    setNumPages(n);
-    setCurrentPage(n - 1);
-  };
+  const onDocumentLoadSuccess = async ({ numPages: loadedPages, getPage }: { numPages: number; getPage: (pageNumber: number) => Promise<any> }) => {
+    setLoadError(null);
+    setNumPages(loadedPages);
+    setCurrentPage(1);
 
-  const onFlip = (e: any) => {
-    setCurrentPage(e.data);
-  };
+    try {
+      const firstPage = await getPage(1);
+      const viewport = firstPage.getViewport({ scale: 1 });
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 2.5));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.5));
-
-  const toggleFullscreen = async () => {
-    if (!fullscreenRef.current) return;
-    if (!document.fullscreenElement) {
-      await fullscreenRef.current.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      await document.exitFullscreen();
-      setIsFullscreen(false);
+      if (viewport.width > 0 && viewport.height > 0) {
+        setPageRatio(viewport.width / viewport.height);
+      }
+    } catch {
+      setPageRatio(0.72);
     }
   };
 
-  const handleToggleBookmark = () => {
-    if (!articleId || !user) return;
-    if (isBookmarked) {
-      const bm = bookmarks?.find(b => b.page_number === currentRealPage);
-      if (bm) removeBookmark(bm.id);
-    } else {
-      addBookmark({ articleId, pageNumber: currentRealPage });
-    }
+  const goToPreviousPage = () => {
+    setCurrentPage((prev) => Math.max(1, prev - 1));
+  };
+
+  const goToNextPage = () => {
+    setCurrentPage((prev) => Math.min(numPages, prev + 1));
   };
 
   return (
-    <div ref={fullscreenRef} className={`w-full h-full flex flex-col items-center ${isFullscreen ? 'bg-background p-4' : ''}`}>
-      <div className="w-full flex-1 flex flex-col items-center min-h-0">
+    <div className="flex h-full w-full flex-col gap-3" dir={dir}>
+      <div className="flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+        <Button variant="outline" size="sm" onClick={goToPreviousPage} disabled={currentPage <= 1 || numPages === 0}>
+          <ChevronLeft className="h-4 w-4" />
+          {labels.previous}
+        </Button>
+        <span className="min-w-[88px] text-center text-sm font-body text-muted-foreground">
+          {labels.page} {currentPage} / {numPages || "-"}
+        </span>
+        <Button variant="outline" size="sm" onClick={goToNextPage} disabled={numPages === 0 || currentPage >= numPages}>
+          {labels.next}
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="w-full flex-1 min-h-0 overflow-hidden rounded-lg border border-border bg-card">
         <Document
           file={pdfUrl}
           onLoadSuccess={onDocumentLoadSuccess}
+          onLoadError={() => setLoadError(labels.failed)}
           loading={
-            <div className="flex items-center justify-center h-full min-h-[320px]">
-              <div className="animate-pulse text-muted-foreground font-body">טוען מסמך...</div>
+            <div className="flex h-full min-h-[320px] items-center justify-center gap-3 text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <div className="font-body">{labels.loading}</div>
             </div>
           }
           error={
-            <div className="flex items-center justify-center h-full min-h-[320px]">
-              <p className="text-destructive font-body">שגיאה בטעינת המסמך</p>
+            <div className="flex h-full min-h-[320px] items-center justify-center px-4 text-center">
+              <p className="font-body text-destructive">{loadError ?? labels.failed}</p>
             </div>
           }
         >
-          <div ref={contentAreaRef} className="flex-1 min-h-0 flex items-center justify-center overflow-auto px-2 py-4 w-full" dir="rtl">
-            {numPages > 0 && containerSize.width > 0 ? (
-              <div
-                style={{
-                  transform: `scale(${zoom})`,
-                  transformOrigin: 'center center',
-                  transition: 'transform 0.2s ease'
-                }}
-              >
-                {/* @ts-ignore - react-pageflip types */}
-                <HTMLFlipBook
-                  ref={flipBookRef}
-                  width={containerSize.width}
-                  height={containerSize.height}
-                  size="fixed"
-                  minWidth={220}
-                  maxWidth={2200}
-                  minHeight={220}
-                  maxHeight={3200}
-                  maxShadowOpacity={0.5}
-                  showCover={true}
-                  mobileScrollSupport={true}
-                  onFlip={onFlip}
-                  className="shadow-2xl"
-                  style={{ direction: "rtl" }}
-                  startPage={numPages - 1}
-                  drawShadow={true}
-                  flippingTime={600}
-                  usePortrait={shouldUsePortrait}
-                  startZIndex={0}
-                  autoSize={false}
-                  clickEventForward={true}
-                  useMouseEvents={true}
-                  swipeDistance={30}
-                  showPageCorners={true}
-                  disableFlipByClick={false}
-                >
-                  {Array.from({ length: numPages }, (_, i) => (
-                    <BookPage
-                      key={i}
-                      pageNumber={numPages - i}
-                      width={containerSize.width}
-                      height={containerSize.height}
-                    />
-                  ))}
-                </HTMLFlipBook>
-              </div>
+          <div ref={contentAreaRef} className="flex h-full min-h-[320px] w-full items-center justify-center overflow-auto p-3 sm:p-4">
+            {numPages > 0 && pageWidth > 0 ? (
+              <Page
+                key={`${pdfUrl}-${currentPage}-${pageWidth}`}
+                pageNumber={currentPage}
+                width={pageWidth}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                loading={
+                  <div className="flex min-h-[280px] items-center justify-center gap-3 text-muted-foreground">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span className="font-body">{labels.loading}</span>
+                  </div>
+                }
+                className="mx-auto overflow-hidden rounded-md shadow-lg"
+              />
             ) : (
-              <div className="animate-pulse text-muted-foreground font-body">טוען...</div>
+              <div className="font-body text-muted-foreground">{labels.loading}</div>
             )}
           </div>
-
-          {numPages > 0 && (
-            <>
-              <TooltipProvider>
-                <div className="flex items-center gap-2 py-3 shrink-0 flex-wrap justify-center">
-                  <Button variant="ghost" size="icon" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} disabled={currentPage <= 0}>
-                    <ChevronRight className="h-5 w-5" />
-                  </Button>
-                  <span className="text-sm font-body text-muted-foreground min-w-[80px] text-center" dir="rtl">
-                    {currentRealPage} / {numPages}
-                  </span>
-                  <Button variant="ghost" size="icon" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} disabled={currentPage >= numPages - 1}>
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-
-                  <div className="w-px h-6 bg-border mx-1" />
-
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" onClick={handleZoomOut} disabled={zoom <= 0.5}>
-                        <ZoomOut className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>הקטן</TooltipContent>
-                  </Tooltip>
-                  <span className="text-xs font-body text-muted-foreground w-12 text-center">{Math.round(zoom * 100)}%</span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" onClick={handleZoomIn} disabled={zoom >= 2.5}>
-                        <ZoomIn className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>הגדל</TooltipContent>
-                  </Tooltip>
-
-                  <div className="w-px h-6 bg-border mx-1" />
-
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" onClick={toggleFullscreen}>
-                        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>{isFullscreen ? "יציאה ממסך מלא" : "מסך מלא"}</TooltipContent>
-                  </Tooltip>
-
-                  {user && articleId && (
-                    <>
-                      <div className="w-px h-6 bg-border mx-1" />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="ghost" size="icon" onClick={handleToggleBookmark} className={isBookmarked ? "text-accent" : ""}>
-                            {isBookmarked ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{isBookmarked ? "הסר סימניה" : "הוסף סימניה"}</TooltipContent>
-                      </Tooltip>
-                    </>
-                  )}
-                </div>
-              </TooltipProvider>
-
-              {user && articleId && sortedBookmarks.length > 0 && (
-                <div className="flex items-center gap-1.5 pb-2 flex-wrap justify-center">
-                  <span className="text-xs text-muted-foreground font-body">סימניות:</span>
-                  {sortedBookmarks.map(bm => (
-                    <Button
-                      key={bm.id}
-                      variant={bm.page_number === currentRealPage ? "default" : "outline"}
-                      size="sm"
-                      className="h-6 px-2 text-xs font-body"
-                      onClick={() => {
-                        const flipIndex = numPages - bm.page_number;
-                        flipBookRef.current?.pageFlip()?.turnToPage(flipIndex);
-                      }}
-                    >
-                      עמ׳ {bm.page_number}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
         </Document>
       </div>
     </div>
