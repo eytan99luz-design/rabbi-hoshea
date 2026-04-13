@@ -5,7 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, Download, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FlipbookViewer } from "@/components/FlipbookViewer";
 import { ArticleQuestionForm } from "@/components/ArticleQuestionForm";
 
@@ -74,9 +74,12 @@ const Articles = () => {
       </div>
 
       <Dialog open={!!viewingArticle} onOpenChange={() => setViewingArticle(null)}>
-        <DialogContent className="max-w-6xl h-[90vh] flex flex-col p-4 sm:p-6">
+        <DialogContent className="max-w-6xl h-[92vh] flex flex-col p-3 sm:p-6">
           <DialogHeader>
             <DialogTitle className="font-display" dir={dir}>{viewingArticle?.title}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {lang === "he" ? "חלון קריאה למאמר בפורמט PDF" : "PDF article reader dialog"}
+            </DialogDescription>
           </DialogHeader>
           <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4">
             <div className="flex-1 min-h-0">
