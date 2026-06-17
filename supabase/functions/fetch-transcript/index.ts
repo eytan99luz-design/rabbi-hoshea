@@ -47,6 +47,25 @@ function extractJsonArrayAfter(html: string, key: string): unknown[] | null {
   return null;
 }
 
+async function fetchTranscriptFromPublicApi(youtubeId: string): Promise<string | null> {
+  const res = await fetch(`https://youtube-transcript.ai/transcript/${youtubeId}.txt?lang=iw`, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+  });
+  if (!res.ok) return null;
+
+  const markdown = await res.text();
+  const marker = "## Transcript";
+  const markerIndex = markdown.indexOf(marker);
+  if (markerIndex < 0) return null;
+
+  const transcript = decodeHtml(markdown.slice(markerIndex + marker.length))
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return transcript.length > 50 && !/sorry|blocking|not available/i.test(transcript) ? transcript : null;
+}
+
 async function fetchTranscript(youtubeId: string): Promise<string | null> {
   let tracks: Array<{ baseUrl: string; languageCode?: string; kind?: string; vssId?: string }> | null = null;
 
@@ -121,7 +140,7 @@ async function fetchTranscript(youtubeId: string): Promise<string | null> {
     }
   }
 
-  if (!tracks || !tracks.length) return null;
+  if (!tracks || !tracks.length) return await fetchTranscriptFromPublicApi(youtubeId);
 
   // Prefer Hebrew (manual), then Hebrew (asr/auto), then anything
   const pick =
@@ -144,7 +163,7 @@ async function fetchTranscript(youtubeId: string): Promise<string | null> {
     if (txt) parts.push(txt);
   }
   const transcript = parts.join(" ").replace(/\s+/g, " ").trim();
-  return transcript || null;
+  return transcript || (await fetchTranscriptFromPublicApi(youtubeId));
 }
 
 Deno.serve(async (req) => {
@@ -186,7 +205,6 @@ Deno.serve(async (req) => {
         .from("videos")
         .select("youtube_id")
         .is("transcript", null)
-        .is("transcript_fetched_at", null)
         .limit(limit);
 
       let ok = 0;
