@@ -15,10 +15,58 @@ function decodeHtml(s: string): string {
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)));
 }
 
+function extractJsonArrayAfter(html: string, key: string): unknown[] | null {
+  const keyIndex = html.indexOf(`"${key}":[`);
+  if (keyIndex < 0) return null;
+
+  const start = html.indexOf("[", keyIndex);
+  if (start < 0) return null;
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < html.length; i++) {
+    const ch = html[i];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (ch === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (ch === "[") depth++;
+    if (ch === "]") depth--;
+    if (depth === 0) return JSON.parse(html.slice(start, i + 1));
+  }
+  return null;
+}
+
+async function fetchTranscriptFromPublicApi(youtubeId: string): Promise<string | null> {
+  const res = await fetch(`https://youtube-transcript.ai/transcript/${youtubeId}.txt?lang=iw`, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+  });
+  if (!res.ok) return null;
+
+  const markdown = await res.text();
+  const marker = "## Transcript";
+  const markerIndex = markdown.indexOf(marker);
+  if (markerIndex < 0) return null;
+
+  const transcript = decodeHtml(markdown.slice(markerIndex + marker.length))
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return transcript.length > 50 && !/sorry|blocking|not available/i.test(transcript) ? transcript : null;
+}
+
 async function fetchTranscript(youtubeId: string): Promise<string | null> {
-  // Use InnerTube API (the same one the YouTube web client uses).
-  // The ANDROID client returns captionTracks reliably for both manual
-  // and auto-generated (ASR) captions, without consent walls.
   let tracks: Array<{ baseUrl: string; languageCode?: string; kind?: string; vssId?: string }> | null = null;
 
   const clients = [
@@ -70,7 +118,29 @@ async function fetchTranscript(youtubeId: string): Promise<string | null> {
     }
   }
 
-  if (!tracks || !tracks.length) return null;
+  // Fallback: some videos return UNPLAYABLE/FAILED_PRECONDITION from InnerTube
+  // while the normal watch page still includes auto-generated Hebrew captions.
+  if (!tracks || !tracks.length) {
+    try {
+      const watchRes = await fetch(`https://www.youtube.com/watch?v=${youtubeId}&hl=he&persist_hl=1`, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+          "Accept-Language": "he,en;q=0.9",
+        },
+      });
+      const html = await watchRes.text();
+      const parsedTracks = extractJsonArrayAfter(html, "captionTracks");
+      if (Array.isArray(parsedTracks) && parsedTracks.length) {
+        tracks = parsedTracks as Array<{ baseUrl: string; languageCode?: string; kind?: string; vssId?: string }>;
+      } else {
+        console.log(`no captionTracks in watch html for ${youtubeId}; status=${watchRes.status}; len=${html.length}`);
+      }
+    } catch (error) {
+      console.warn(`watch fallback failed for ${youtubeId}:`, error);
+    }
+  }
+
+  if (!tracks || !tracks.length) return await fetchTranscriptFromPublicApi(youtubeId);
 
   // Prefer Hebrew (manual), then Hebrew (asr/auto), then anything
   const pick =
@@ -80,7 +150,7 @@ async function fetchTranscript(youtubeId: string): Promise<string | null> {
 
   // Force XML format (fmt is sometimes srv3/json3 by default).
   let url = pick.baseUrl;
-  if (!/[?&]fmt=/.test(url)) url += "&fmt=srv1";
+  if (!/[?&]fmt=/.test(url)) url += `${url.includes("?") ? "&" : "?"}fmt=srv1`;
   const xmlRes = await fetch(url);
   if (!xmlRes.ok) return null;
   const xml = await xmlRes.text();
@@ -93,7 +163,7 @@ async function fetchTranscript(youtubeId: string): Promise<string | null> {
     if (txt) parts.push(txt);
   }
   const transcript = parts.join(" ").replace(/\s+/g, " ").trim();
-  return transcript || null;
+  return transcript || (await fetchTranscriptFromPublicApi(youtubeId));
 }
 
 Deno.serve(async (req) => {
@@ -135,7 +205,6 @@ Deno.serve(async (req) => {
         .from("videos")
         .select("youtube_id")
         .is("transcript", null)
-        .is("transcript_fetched_at", null)
         .limit(limit);
 
       let ok = 0;
