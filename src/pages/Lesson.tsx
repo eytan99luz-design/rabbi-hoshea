@@ -17,6 +17,7 @@ import { LessonNotes } from "@/components/LessonNotes";
 import { FollowMasechetButton } from "@/components/FollowMasechetButton";
 import { TalmudTextPanel } from "@/components/TalmudTextPanel";
 import { LessonQuestionForm } from "@/components/LessonQuestionForm";
+import { LessonTranscript } from "@/components/LessonTranscript";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 declare global {
@@ -155,6 +156,14 @@ const Lesson = () => {
                 </div>
                 {video.id && <LessonNotes videoId={video.id} />}
                 {video.id && <LessonQuestionForm videoId={video.id} />}
+                {video.id && (
+                  <LessonTranscript
+                    videoId={video.id}
+                    youtubeId={video.youtube_id}
+                    initialTranscript={(video as any).transcript ?? null}
+                    fetchedAt={(video as any).transcript_fetched_at ?? null}
+                  />
+                )}
                 {adjacent && (adjacent.prev || adjacent.next) && (
                   <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
                     {adjacent.prev ? (<Link to={`/lesson/${adjacent.prev.youtube_id}`}><Button variant="outline" className="font-body"><ChevronRight className="h-4 w-4 ml-1" />{dafLabel(adjacent.prev.daf!)}</Button></Link>) : <div />}
@@ -186,6 +195,14 @@ const Lesson = () => {
             </div>
             {video.id && <LessonNotes videoId={video.id} />}
             {video.id && <LessonQuestionForm videoId={video.id} />}
+            {video.id && (
+              <LessonTranscript
+                videoId={video.id}
+                youtubeId={video.youtube_id}
+                initialTranscript={(video as any).transcript ?? null}
+                fetchedAt={(video as any).transcript_fetched_at ?? null}
+              />
+            )}
           </div>
         )}
       </div>
