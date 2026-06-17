@@ -16,24 +16,61 @@ function decodeHtml(s: string): string {
 }
 
 async function fetchTranscript(youtubeId: string): Promise<string | null> {
-  const watchRes = await fetch(`https://www.youtube.com/watch?v=${youtubeId}&hl=iw`, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
-      "Accept-Language": "he,en;q=0.9",
-    },
-  });
-  if (!watchRes.ok) return null;
-  const html = await watchRes.text();
+  // Use InnerTube API (the same one the YouTube web client uses).
+  // The ANDROID client returns captionTracks reliably for both manual
+  // and auto-generated (ASR) captions, without consent walls.
+  let tracks: Array<{ baseUrl: string; languageCode?: string; kind?: string; vssId?: string }> | null = null;
 
-  const m = html.match(/"captionTracks":(\[.*?\])/);
-  if (!m) return null;
-  let tracks: Array<{ baseUrl: string; languageCode?: string; kind?: string; vssId?: string }>;
-  try {
-    tracks = JSON.parse(m[1].replace(/\\u0026/g, "&"));
-  } catch {
-    return null;
+  const clients = [
+    {
+      clientName: "ANDROID",
+      clientVersion: "19.09.37",
+      userAgent: "com.google.android.youtube/19.09.37 (Linux; U; Android 14) gzip",
+    },
+    {
+      clientName: "WEB",
+      clientVersion: "2.20240101.00.00",
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+    },
+  ];
+
+  for (const c of clients) {
+    try {
+      const res = await fetch(
+        "https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": c.userAgent,
+            "Accept-Language": "he,en;q=0.9",
+          },
+          body: JSON.stringify({
+            videoId: youtubeId,
+            context: {
+              client: {
+                clientName: c.clientName,
+                clientVersion: c.clientVersion,
+                hl: "iw",
+                gl: "IL",
+              },
+            },
+          }),
+        },
+      );
+      if (!res.ok) continue;
+      const json = await res.json();
+      const t = json?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+      if (Array.isArray(t) && t.length) {
+        tracks = t;
+        break;
+      }
+    } catch {
+      // try next client
+    }
   }
-  if (!tracks.length) return null;
+
+  if (!tracks || !tracks.length) return null;
 
   // Prefer Hebrew (manual), then Hebrew (asr/auto), then anything
   const pick =
@@ -41,7 +78,9 @@ async function fetchTranscript(youtubeId: string): Promise<string | null> {
     tracks.find((t) => t.languageCode === "iw" || t.languageCode === "he") ||
     tracks[0];
 
-  const url = pick.baseUrl;
+  // Force XML format (fmt is sometimes srv3/json3 by default).
+  let url = pick.baseUrl;
+  if (!/[?&]fmt=/.test(url)) url += "&fmt=srv1";
   const xmlRes = await fetch(url);
   if (!xmlRes.ok) return null;
   const xml = await xmlRes.text();
