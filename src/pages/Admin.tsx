@@ -22,6 +22,7 @@ import { SummaryGenerator } from "@/components/admin/SummaryGenerator";
 import { TagManager } from "@/components/admin/TagManager";
 import { VideoDateManager } from "@/components/admin/VideoDateManager";
 import { QuestionManager } from "@/components/admin/QuestionManager";
+import { TranscriptFetcher } from "@/components/admin/TranscriptFetcher";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -370,6 +371,7 @@ const Admin = () => {
           <TabsContent value="sync" className="space-y-6">
             <YouTubeSync />
             <SummaryGenerator />
+            <TranscriptFetcher />
           </TabsContent>
 
           <TabsContent value="subscribers">
