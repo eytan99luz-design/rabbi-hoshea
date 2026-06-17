@@ -426,6 +426,8 @@ export type Database = {
           thumbnail_url: string | null
           title: string
           title_en: string | null
+          transcript: string | null
+          transcript_fetched_at: string | null
           updated_at: string
           youtube_id: string
         }
@@ -441,6 +443,8 @@ export type Database = {
           thumbnail_url?: string | null
           title: string
           title_en?: string | null
+          transcript?: string | null
+          transcript_fetched_at?: string | null
           updated_at?: string
           youtube_id: string
         }
@@ -456,6 +460,8 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string
           title_en?: string | null
+          transcript?: string | null
+          transcript_fetched_at?: string | null
           updated_at?: string
           youtube_id?: string
         }
