@@ -27,7 +27,7 @@ export function TranscriptFetcher() {
     },
   });
 
-  const remaining = (counts?.total || 0) - (counts?.attempted || 0);
+  const remaining = (counts?.total || 0) - (counts?.withTranscript || 0);
 
   const runBatch = async () => {
     setRunning(true);
@@ -56,7 +56,7 @@ export function TranscriptFetcher() {
     }
   };
 
-  const pct = counts && counts.total > 0 ? Math.round((counts.attempted / counts.total) * 100) : 0;
+  const pct = counts && counts.total > 0 ? Math.round((counts.withTranscript / counts.total) * 100) : 0;
 
   return (
     <Card>
@@ -78,13 +78,13 @@ export function TranscriptFetcher() {
           </div>
           <div className="p-3 rounded-lg bg-muted/40">
             <p className="text-2xl font-display font-bold">{remaining}</p>
-            <p className="text-xs text-muted-foreground font-body">נותרו לבדיקה</p>
+            <p className="text-xs text-muted-foreground font-body">נותרו למשיכה</p>
           </div>
         </div>
 
         <Progress value={pct} />
         <p className="text-xs text-muted-foreground font-body text-center">
-          {counts?.attempted ?? 0} / {counts?.total ?? 0} נבדקו ({pct}%)
+          {counts?.withTranscript ?? 0} / {counts?.total ?? 0} עם תמלול ({pct}%)
         </p>
 
         {running && (
@@ -95,10 +95,10 @@ export function TranscriptFetcher() {
 
         <Button onClick={runBatch} disabled={running || remaining === 0} className="w-full font-body">
           {running ? <Loader2 className="h-4 w-4 animate-spin ml-2" /> : <Play className="h-4 w-4 ml-2" />}
-          {running ? "מושך תמלולים…" : remaining === 0 ? "כל הסרטונים נבדקו" : `משוך תמלולים לכל הסרטונים (${remaining})`}
+          {running ? "מושך תמלולים…" : remaining === 0 ? "לכל הסרטונים יש תמלול" : `משוך תמלולים לכל הסרטונים (${remaining})`}
         </Button>
         <p className="text-xs text-muted-foreground font-body">
-          המערכת מושכת אוטומטית כתוביות (כולל אוטומטיות) בעברית מ-YouTube. שיעורים שכבר נבדקו לא ייבדקו שוב.
+          המערכת מושכת אוטומטית כתוביות בעברית, כולל כתוביות אוטומטיות, ותנסה שוב גם שיעורים שנכשלו קודם.
         </p>
       </CardContent>
     </Card>
